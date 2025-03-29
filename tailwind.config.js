@@ -5,7 +5,7 @@ export default {
     extend: {
       // add background image
       backgroundImage: {
-        "main-bg": "url('/src/assets/cast/background.svg')",
+        "main-bg": "url('/assets/cast/background.svg')",
       },
       // add custom fonts
       fontFamily: {
