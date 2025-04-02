@@ -89,14 +89,14 @@ function App() {
       {/* family introduction */}
       <div className="min-h-screen flex">
         <div className="h-full flex-1 grid grid-cols-1 md:grid-cols-2">
-          <div className="h-full min-h-screen bg-main-bg bg-top bg-no-repeat bg-fit order-2 md:order-1 p-6 flex justify-center items-center">
+          <div className="h-full min-h-screen bg-main-bg bg-top bg-no-repeat bg-cover order-2 md:order-1 p-6 flex justify-center items-center">
             <div className="bg-secondaryLight p-6 rounded-3xl grid  grid-cols-2 md:grid-cols-3 gap-6 ">
               {family.map((member: TFamily) => (
                 <img
                   key={member.name}
                   src={`${member.image || ""}`}
                   alt={member.name}
-                  className={`h-40 w-40 rounded-full border-[10px] ${member.colorHex}`}
+                  className={`rounded-full border-[10px] ${member.colorHex}`}
                 />
               ))}
             </div>
