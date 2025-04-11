@@ -1,4 +1,3 @@
-import React from "react";
 import { familyList } from "../constants";
 import { TFamily } from "../types";
 

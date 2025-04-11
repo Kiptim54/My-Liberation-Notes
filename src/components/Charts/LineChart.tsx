@@ -180,6 +180,7 @@ export default function LineChart() {
       .attr("r", 5)
       .attr("fill", "#BF894C")
       .on("mouseover", function (event, d) {
+        console.log(event);
         tooltip
           .style("display", "block")
           .html(
@@ -191,7 +192,7 @@ export default function LineChart() {
       .on("mousemove", function (event) {
         const [mouseX, mouseY] = d3.pointer(event);
 
-        const bisect = d3.bisector((d) => d.episode).right;
+        const bisect = d3.bisector((d: TData) => d.episode).right;
         const index = bisect(chartData, mouseX);
         const closestDataPoint = chartData[index];
 

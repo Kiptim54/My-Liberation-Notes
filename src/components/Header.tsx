@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Header() {
   const circleStyle =
     "rounded-full bg-primary h-full w-full text-center flex justify-center items-center p-8 text-balance font-bold font-outfit text-xl aspect-square ";
