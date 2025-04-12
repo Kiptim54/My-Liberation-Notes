@@ -131,7 +131,7 @@ export default function LineChart() {
         .attr("x2", dimensions.width - (dimensions.margin.right || 0))
         .attr("y1", zeroY)
         .attr("y2", zeroY)
-        .attr("stroke", "#3D5A6C")
+        .attr("stroke", "black")
         .attr("stroke-dasharray", "4 4")
         .attr("stroke-width", 2);
     }
@@ -178,7 +178,14 @@ export default function LineChart() {
       .attr("cx", (d) => xScale(d.episode))
       .attr("cy", (d) => yScale(d.sentiment))
       .attr("r", 5)
-      .attr("fill", "#BF894C")
+      .attr("fill", (d) => {
+        // at the moment I cannot find a color for the negatives. I will play around with that on Figma
+        if (d.sentiment < 0) {
+          return "#BF894C";
+        } else {
+          return "#BF894C";
+        }
+      })
       .on("mouseover", function (event, d) {
         console.log(event);
         tooltip
@@ -214,8 +221,8 @@ export default function LineChart() {
         }
 
         tooltip
-          .style("left", `${left}px`)
-          .style("top", `${top}px`)
+          .style("left", `${0}px`)
+          .style("top", `${0}px`)
           .style("display", "block")
           .html(
             `<strong>Episode:</strong> ${closestDataPoint.episode}<br/>
@@ -261,10 +268,5 @@ export default function LineChart() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [chartData, dimensions]);
 
-  return (
-    <div
-      id="wrapper"
-      className="relative w-full md:w-1/2 h-screen overflow-hidden"
-    ></div>
-  );
+  return <div id="wrapper" className="relative  overflow-hidden"></div>;
 }
