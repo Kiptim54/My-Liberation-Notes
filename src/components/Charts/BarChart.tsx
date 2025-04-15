@@ -12,7 +12,8 @@ export default function BarChart() {
   const dimensions = React.useMemo(
     () => ({
       width: 800,
-      height: 400,
+      // if small screen height 700 else 400
+      height: window.innerWidth < 768 ? 900 : 400,
       margin: { top: 20, right: 30, bottom: 30, left: 40 },
     }),
     []
