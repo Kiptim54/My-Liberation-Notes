@@ -81,10 +81,10 @@ export default function FamilyIntro() {
 
           {familyList.map((member) => (
             <div className="flex flex-wrap items-end gap-2" key={member.name}>
-              <h5 className="md:text-xl font-semibold font-outfit">
+              <h5 className="text-xl font-semibold font-outfit">
                 {member.role}:{" "}
               </h5>
-              <p className="md:text-xl relative">
+              <p className="text-lg md:text-xl relative">
                 <span
                   className={`${member.color} absolute left-2 right-2 top-2 bottom-0 opacity-75 -z-10`}
                 ></span>
