@@ -108,7 +108,7 @@ export default function BarChart() {
       .append("rect")
       .attr("class", "bar2")
       .attr("x", (d) => xScale(d.character) || 0)
-      .attr("y", (d) => yScale(0))
+      .attr("y", () => yScale(0))
       .attr("width", xScale.bandwidth())
       .attr("height", (d) => Math.abs(yScale(0) - yScale(d.negative)))
       .attr("fill", "steelblue")
@@ -137,7 +137,7 @@ export default function BarChart() {
     //   .attr("font-size", "10px")
     //   .attr("fill", "black");
 
-    svg.selectAll(".tick").each(function (d, i) {
+    svg.selectAll(".tick").each(function (_d, i) {
       const character = chartData[i]?.character;
       if (!character) return;
       const imageUrl = characterPathToImage(character);
