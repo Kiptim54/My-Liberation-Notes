@@ -36,7 +36,7 @@ export default function FamilyIntro() {
                   showFamilyMember
                     ? "translate-x-0 opacity-100"
                     : "-translate-x-[100%]"
-                } transition-transform duration-500 ease-in-out inset-0 bg-secondaryLight text-black p-6 rounded-3xl`}
+                } transition-transform duration-500 ease-in-out inset-0 overflow-y-scroll md:overflow-hidden bg-secondaryLight text-black p-6 rounded-3xl`}
               >
                 <div className="flex flex-col items-center justify-center gap-4 text-center p-2">
                   <img
@@ -49,7 +49,7 @@ export default function FamilyIntro() {
                       setShowFamilyMember(true);
                     }}
                   />
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap justify-center gap-2">
                     <h4 className="text-lg font-outfit font-bold">
                       {selectedFamilyMember.role}:
                     </h4>
@@ -80,11 +80,11 @@ export default function FamilyIntro() {
           </h4>
 
           {familyList.map((member) => (
-            <div className="flex items-end gap-2" key={member.name}>
-              <h5 className="text-xl font-semibold font-outfit">
+            <div className="flex flex-wrap items-end gap-2" key={member.name}>
+              <h5 className="md:text-xl font-semibold font-outfit">
                 {member.role}:{" "}
               </h5>
-              <p className="text-xl relative">
+              <p className="md:text-xl relative">
                 <span
                   className={`${member.color} absolute left-2 right-2 top-2 bottom-0 opacity-75 -z-10`}
                 ></span>
