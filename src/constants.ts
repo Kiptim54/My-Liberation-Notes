@@ -1,4 +1,4 @@
-import { TFamily } from "./types";
+import { TFamily, FamilyNames } from "./types";
 export const familyList: TFamily[] = [
   {
     name: "Yeom Je-ho",
@@ -55,3 +55,23 @@ export const familyList: TFamily[] = [
     bio: "Mr. Gu is a mysterious and enigmatic character who works at the same factory as Yeom Je-ho. He is known for his stoic demeanor and often serves as a source of wisdom for the Yeom family. He struggles with his own past and often reflects on the meaning of life.",
   },
 ];
+
+export const characterPathToImage = (character: FamilyNames) => {
+  switch (character) {
+    case "Yeom Je-ho":
+      return "/assets/cast/Father.svg";
+
+    case "Kwak Hye-suk":
+      return "/assets/cast/Mother.svg";
+    case "Yeom Ki-jeong":
+      return "/assets/cast/Daughter1.svg";
+    case "Yeom Chang-hee":
+      return "/assets/cast/Son.svg";
+    case "Yeom Mi-jeong":
+      return "/assets/cast/lastborm.svg";
+    case "Mr. Gu":
+      return "/assets/cast/gu.svg";
+    default:
+      return "assets/cast/Father.svg";
+  }
+};

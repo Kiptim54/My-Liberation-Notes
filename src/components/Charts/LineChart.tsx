@@ -19,7 +19,7 @@ export default function LineChart() {
 
   useEffect(() => {
     d3.csv("/assets/episode-emotion-sentiment.csv").then((data) => {
-      console.log({ data });
+      // console.log({ data });
       const processedData = data.map((item) => {
         const episode = Number(item?.Episode);
         const sentiment = item?.Sentiment;
@@ -45,7 +45,7 @@ export default function LineChart() {
       -30, 30,
     ];
 
-    console.log({ minMaxEpisodes, minMaxSentiment });
+    // console.log({ minMaxEpisodes, minMaxSentiment });
 
     // d3 scales
     // x scales
@@ -252,7 +252,7 @@ export default function LineChart() {
       if (!wrapper) return;
 
       const { top, height } = wrapper.getBoundingClientRect();
-      const start = top + scrollTop - windowHeight; // start animating when half the wrapper is in view
+      const start = top + scrollTop - windowHeight * 0.9; // start animating when half the wrapper is in view
       const end = start + height;
 
       const scrollPercent = Math.min(
@@ -268,5 +268,5 @@ export default function LineChart() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [chartData, dimensions]);
 
-  return <div id="wrapper" className="relative  overflow-hidden"></div>;
+  return <div id="wrapper" className="relative  overflow-hidden mx-auto"></div>;
 }
