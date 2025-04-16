@@ -1,4 +1,4 @@
-import BarChart from "./Charts/BarChart";
+import VerticalBarChart from "./Charts/VerticalBarChart";
 
 import {
   Select,
@@ -8,17 +8,18 @@ import {
   SelectValue,
 } from "./ui/select";
 
-export default function FamilySentiment() {
+export default function FamilySpeakingTime() {
   return (
-    <div className="bg-secondaryLight md:min-h-screen text-black p-2 md:px-10  mx-auto w-full">
+    <div className="bg-secondaryLight md:min-h-screen text-black p-2 md:p-10  mx-auto w-full">
       <div className=" flex flex-col md:flex-row justify-between items-start p-4">
         <div className="md:w-1/2 flex-2">
           <h3 className="text-2xl md:text-3xl font-bold font-outfit mb-2">
-            How happy & unhappy is the Yeom Family?
+            How often do they speak?
           </h3>
           <p>
-            Here we look at the breakdown of each character through each episode
-            and compare their positive and negative sentiments over time...
+            Here we look at the breakdown of each character through each
+            episode. Is there a correlation with their emotional growth and
+            their speech frequency?
           </p>
         </div>
         <div className="my-4 md:my-0 ">
@@ -28,6 +29,7 @@ export default function FamilySentiment() {
               <SelectValue
                 placeholder="Select Episode"
                 className="font-outfit"
+                defaultValue={"Episode 1"}
               />
             </SelectTrigger>
             <SelectContent className="h-[180px]">
@@ -43,7 +45,7 @@ export default function FamilySentiment() {
         </div>
       </div>
 
-      <BarChart />
+      <VerticalBarChart />
     </div>
   );
 }

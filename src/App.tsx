@@ -2,6 +2,7 @@ import Header from "./components/Header";
 import FamilyIntro from "./components/FamilyIntro";
 import EpisodesSentiments from "./components/EpisodesSentiments";
 import FamilySentiment from "./components/FamilySentiment";
+import FamilySpeakingTime from "./components/FamilySpeakingTime";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <EpisodesSentiments />
       {/* Sentiment Analysis */}
       <FamilySentiment />
+      <FamilySpeakingTime />
     </div>
   );
 }

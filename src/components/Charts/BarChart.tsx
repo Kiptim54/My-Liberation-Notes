@@ -115,6 +115,31 @@ export default function BarChart() {
       .attr("fill", "steelblue")
       .attr("opacity", 0.8);
 
+    //   add tooltip
+    const tooltip = d3
+      .select("#bar-wrapper")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0)
+      .style("position", "absolute")
+      .style("background-color", "#fff")
+      .style("border-radius", "5px")
+      .style("padding", "5px")
+      .style("pointer-events", "none");
+    svg
+      .selectAll("rect")
+      .on("mouseover", function (event, d) {
+        tooltip.transition().duration(200).style("opacity", 0.9);
+        tooltip
+          .html(
+            `<b>${d.character}</b>: <br/> Positive: ${d.positive} <br/> Negative: ${d.negative}`
+          )
+          .style("left", event.pageX + "px")
+          .style("top", event.pageY - 28 + "px");
+      })
+      .on("mouseout", function () {
+        tooltip.transition().duration(500).style("opacity", 0);
+      });
     // x axis
     svg
       .append("g")

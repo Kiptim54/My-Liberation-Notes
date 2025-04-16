@@ -5,6 +5,7 @@ export type TFamily = {
   textColor: string;
   image: string;
   colorHex: string;
+  colorHexVal: string;
   bio: string;
 };
 
