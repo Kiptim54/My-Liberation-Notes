@@ -74,6 +74,19 @@ export default function VerticalBarChart() {
         "max-width: 100%; width:90%; height: 100%; height: intrinsic; background:#EADFCF; padding:12; "
       );
     // create the bars
+
+    //   add tooltip
+    const tooltip = d3
+      .select("#vertical-bar-chart")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0)
+      .style("position", "absolute")
+      .style("background-color", "#fff")
+      .style("border-radius", "5px")
+      .style("padding", "5px")
+      .style("pointer-events", "none");
+
     svg
       .selectAll("rect")
       .data(chartData)
@@ -90,24 +103,13 @@ export default function VerticalBarChart() {
       .attr("rx", 5)
       .attr("ry", 5)
       .attr("opacity", 0.9);
-
-    //   add tooltip
-    const tooltip = d3
-      .select("#vertical-bar-chart")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("opacity", 0)
-      .style("position", "absolute")
-      .style("background-color", "#fff")
-      .style("border-radius", "5px")
-      .style("padding", "5px")
-      .style("pointer-events", "none");
     svg
       .selectAll("rect")
-      .on("mouseover", function (event, d) {
+      .on("mouseover", (event, d) => {
+        const data = d as TData;
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip
-          .html(`${d.character}: ${d.time} seconds`)
+          .html(`${data.character}: ${data.time} seconds`)
           .style("left", event.pageX + "px")
           .style("top", event.pageY - 28 + "px");
       })

@@ -129,10 +129,11 @@ export default function BarChart() {
     svg
       .selectAll("rect")
       .on("mouseover", function (event, d) {
+        const data = d as TData;
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip
           .html(
-            `<b>${d.character}</b>: <br/> Positive: ${d.positive} <br/> Negative: ${d.negative}`
+            `<b>${data.character}</b>: <br/> Positive: ${data.positive} <br/> Negative: ${data.negative}`
           )
           .style("left", event.pageX + "px")
           .style("top", event.pageY - 28 + "px");
