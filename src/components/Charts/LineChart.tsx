@@ -179,7 +179,7 @@ export default function LineChart() {
       .attr("cy", (d) => yScale(d.sentiment))
       .attr("r", 5)
       .attr("fill", (d) => {
-        // at the moment I cannot find a color for the negatives. I will play around with that on Figma
+        // at the moment I cannot sfind a color for the negatives. I will play around with that on Figma
         if (d.sentiment < 0) {
           return "#BF894C";
         } else {
