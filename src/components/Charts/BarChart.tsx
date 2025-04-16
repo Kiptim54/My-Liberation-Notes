@@ -155,6 +155,41 @@ export default function BarChart() {
         .attr("x", -35) // adjust as needed for positioning
         .attr("y", -35); // adjust as needed for positioning
     });
+
+    // add a legend
+    const legend = svg
+      .append("g")
+      .attr(
+        "transform",
+        `translate(${0}, ${dimensions.height - dimensions.margin.bottom - 10})`
+      );
+    legend
+      .append("rect")
+      .attr("width", 10)
+      .attr("height", 10)
+      .attr("fill", "orange")
+      .attr("opacity", 0.8);
+    legend
+      .append("text")
+      .attr("x", 15)
+      .attr("y", 10)
+      .text("Positive Sentiments")
+      .style("font-size", "12px")
+      .attr("fill", "black");
+    legend
+      .append("rect")
+      .attr("width", 10)
+      .attr("height", 10)
+      .attr("y", 20)
+      .attr("fill", "steelblue")
+      .attr("opacity", 0.8);
+    legend
+      .append("text")
+      .attr("x", 15)
+      .attr("y", 30)
+      .text("Negative Sentiments")
+      .style("font-size", "12px")
+      .attr("fill", "black");
   }, [chartData, dimensions]);
-  return <div id="bar-wrapper" className="w-full mx-auto"></div>;
+  return <div id="bar-wrapper" className="w-full mx-auto font-outfit"></div>;
 }

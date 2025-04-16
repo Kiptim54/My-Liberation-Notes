@@ -186,8 +186,7 @@ export default function LineChart() {
           return "#BF894C";
         }
       })
-      .on("mouseover", function (event, d) {
-        console.log(event);
+      .on("mouseover", function (_event, d) {
         tooltip
           .style("display", "block")
           .html(
@@ -196,12 +195,13 @@ export default function LineChart() {
             }<br/><strong">Sentiment:</strong> ${d.sentiment.toFixed(2)}</div>`
           );
       })
-      .on("mousemove", function (event) {
+      .on("mousemove", function (event, d) {
         const [mouseX, mouseY] = d3.pointer(event);
+        // get episode
 
-        const bisect = d3.bisector((d: TData) => d.episode).right;
-        const index = bisect(chartData, mouseX);
-        const closestDataPoint = chartData[index];
+        // const bisect = d3.bisector((d: TData) => d.episode).right;
+        // const index = bisect(chartData, mouseX);
+        // const closestDataPoint = chartData[index];
 
         const tooltipWidth = 120;
         const tooltipHeight = 50;
@@ -221,14 +221,12 @@ export default function LineChart() {
         }
 
         tooltip
-          .style("left", `${0}px`)
-          .style("top", `${0}px`)
+          .style("left", `${left}px`)
+          .style("top", `${top}px`)
           .style("display", "block")
           .html(
-            `<strong>Episode:</strong> ${closestDataPoint.episode}<br/>
-             <strong>Sentiment:</strong> ${closestDataPoint.sentiment.toFixed(
-               2
-             )}`
+            `<strong>Episode:</strong> ${d?.episode}<br/>
+             <strong>Sentiment:</strong> ${d.sentiment.toFixed(2)}`
           );
       })
       .on("mouseout", function () {
@@ -252,7 +250,7 @@ export default function LineChart() {
       if (!wrapper) return;
 
       const { top, height } = wrapper.getBoundingClientRect();
-      const start = top + scrollTop - windowHeight * 0.9; // start animating when half the wrapper is in view
+      const start = top + scrollTop - windowHeight * 0.7; // start animating when half the wrapper is in view
       const end = start + height;
 
       const scrollPercent = Math.min(
@@ -268,5 +266,5 @@ export default function LineChart() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [chartData, dimensions]);
 
-  return <div id="wrapper" className="relative  overflow-hidden mx-auto"></div>;
+  return <div id="wrapper" className="relative  mx-auto overflow-hidden"></div>;
 }
