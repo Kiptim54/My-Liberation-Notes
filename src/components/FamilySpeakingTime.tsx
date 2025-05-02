@@ -1,4 +1,5 @@
 import VerticalBarChart from "./Charts/VerticalBarChart";
+import { useState } from "react";
 
 import {
   Select,
@@ -9,6 +10,7 @@ import {
 } from "./ui/select";
 
 export default function FamilySpeakingTime() {
+  const [currentEpisode, setCurrentEpisode] = useState<number>(1);
   return (
     <div className="bg-secondaryLight md:min-h-screen text-black p-2 md:p-10  mx-auto w-full">
       <div className=" flex flex-col md:flex-row justify-between items-start p-4">
@@ -23,29 +25,33 @@ export default function FamilySpeakingTime() {
           </p>
         </div>
         <div className="my-4 md:my-0 ">
-          <p className="text-sm font-outfit mb-2">Filter by Episode:</p>
-          <Select>
+          <p className="text-sm font-outfit mb-3">Filter by Episode:</p>
+          <Select
+            onValueChange={(value) => {
+              const episode = Number(value.split(" ")[1]);
+              setCurrentEpisode(episode);
+            }}
+            value={`Episode ${currentEpisode}`}
+            defaultValue={`Episode ${currentEpisode}`}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue
                 placeholder="Select Episode"
                 className="font-outfit"
-                defaultValue={"Episode 1"}
               />
             </SelectTrigger>
-            <SelectContent className="h-[180px]">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(
-                (episode) => (
-                  <SelectItem key={episode} value={`Episode ${episode}`}>
-                    Episode {episode}
-                  </SelectItem>
-                )
-              )}
+            <SelectContent className="max-h-[180px]">
+              {[1, 2, 3].map((episode) => (
+                <SelectItem key={episode} value={`Episode ${episode}`}>
+                  Episode {episode}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
       </div>
 
-      <VerticalBarChart />
+      <VerticalBarChart currentEpisode={currentEpisode} />
     </div>
   );
 }

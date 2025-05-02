@@ -4,9 +4,23 @@ import * as d3 from "d3";
 import { characterPathToImage, familyList } from "../../constants";
 type TData = {
   character: FamilyNames;
-  time: number;
+  wordCount: number;
 };
-export default function VerticalBarChart() {
+
+type TProps = {
+  currentEpisode?: number;
+};
+
+interface SpeakerSentiment {
+  positive: number;
+  negative: number;
+  wordcount: number;
+}
+
+interface SentimentData {
+  string: SpeakerSentiment;
+}
+export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
   const [chartData, setChartData] = useState<TData[]>([]);
   const dimensions = React.useMemo(
     () => ({
@@ -19,27 +33,32 @@ export default function VerticalBarChart() {
   );
 
   useEffect(() => {
-    d3.csv("/assets/actor_speaking_time.csv").then((data) => {
-      console.log({ data });
-      const processedData = data.map((item) => {
-        const character = item?.Character as FamilyNames;
-        const time = Number(item?.Time);
+    d3.json("/assets/actorsentiment.json").then((data) => {
+      if (!data && !currentEpisode) return;
+      // console.log(data);
+      const typedData = data as SentimentData[];
+      const indexedData = typedData[currentEpisode - 1];
+
+      const processedData = Object.entries(indexedData).map(([key, value]) => {
+        const character = key as FamilyNames;
+        const wordCount = Number(value.wordcount);
 
         return {
           character,
-          time,
+          wordCount,
         };
       });
+
       setChartData(processedData);
     });
-  }, []);
+  }, [currentEpisode]);
 
   useEffect(() => {
     // clean up the svg before drawing
     d3.select("#vertical-bar-chart").selectAll("*").remove();
     // x and y axis accessors
     const yAccessor = (d: TData) => d.character;
-    const xAccessor = (d: TData) => d.time;
+    const xAccessor = (d: TData) => Number(d.wordCount);
     // d3 scales
     // x scales
     const yScale = d3
@@ -60,7 +79,8 @@ export default function VerticalBarChart() {
       .range([
         dimensions.margin.left,
         dimensions.width - dimensions.margin.right,
-      ]);
+      ])
+      .nice();
 
     // create the svg
     const svg = d3
@@ -89,27 +109,93 @@ export default function VerticalBarChart() {
 
     svg
       .selectAll("rect")
-      .data(chartData)
-      .enter()
-      .append("rect")
-      .attr("x", dimensions.margin.left)
-      .attr("y", (d) => yScale(yAccessor(d)) || 0)
-      .attr("width", (d) => xScale(xAccessor(d)))
-      .attr("height", yScale.bandwidth())
-      .attr("fill", (_d, index) => {
-        const color = familyList[index]?.colorHexVal;
-        return color ? color : "steelblue";
-      })
-      .attr("rx", 5)
-      .attr("ry", 5)
-      .attr("opacity", 0.9);
+      .data(chartData, (d) => (d as TData).character)
+      .join(
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("x", dimensions.margin.left)
+            .attr("y", (d) => yScale(yAccessor(d)) || 0)
+            .attr("width", () => xScale(0))
+            .attr("height", yScale.bandwidth())
+            .attr("fill", (_d, index) => {
+              const color = familyList[index]?.colorHexVal;
+              return color ? color : "steelblue";
+            })
+            .attr("rx", 5)
+            .attr("ry", 5)
+            .attr("opacity", 0.9)
+            .attr("class", "bar")
+            .call((enter) => {
+              enter
+                .transition()
+                .duration(1000)
+                .attr("y", (d) => yScale(yAccessor(d)) || 0)
+                .attr("width", (d) => xScale(xAccessor(d)))
+                .attr("height", yScale.bandwidth())
+                .attr("fill", (_d, index) => {
+                  const color = familyList[index]?.colorHexVal;
+                  return color ? color : "steelblue";
+                })
+                .attr("rx", 5)
+                .attr("ry", 5)
+                .attr("opacity", 0.9);
+            }),
+
+        (update) =>
+          update
+            .transition()
+            .duration(1000)
+            .attr("y", (d) => yScale(yAccessor(d)) || 0)
+            .attr("width", (d) => xScale(xAccessor(d)))
+            .attr("height", yScale.bandwidth())
+            .attr("fill", (_d, index) => {
+              const color = familyList[index]?.colorHexVal;
+              return color ? color : "steelblue";
+            })
+            .attr("rx", 5)
+            .attr("ry", 5)
+            .attr("opacity", 0.9),
+        (exit) =>
+          exit
+            .transition()
+            .duration(300)
+            .attr("height", 0)
+            .attr("width", () => xScale(0))
+            .attr("y", xScale(0))
+            .remove()
+        // .remove
+      );
+    // update the bars
+
+    // svg
+    //   .selectAll("rect")
+    //   .data(chartData)
+    //   .enter()
+    //   .append("rect")
+    //   .attr("x", dimensions.margin.left)
+    //   .attr("y", (d) => yScale(yAccessor(d)) || 0)
+    //   .attr("width", (d) => xScale(xAccessor(d)))
+    //   .attr("height", yScale.bandwidth())
+    //   .attr("fill", (_d, index) => {
+    //     const color = familyList[index]?.colorHexVal;
+    //     return color ? color : "steelblue";
+    //   })
+    //   .attr("rx", 5)
+    //   .attr("ry", 5)
+    //   .attr("opacity", 0.9);
+
     svg
       .selectAll("rect")
       .on("mouseover", (event, d) => {
         const data = d as TData;
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip
-          .html(`${data.character}: ${data.time} seconds`)
+          .html(
+            `${
+              data.character
+            }: <b>${data.wordCount.toLocaleString()} Words Spoken </b>`
+          )
           .style("left", event.pageX + "px")
           .style("top", event.pageY - 28 + "px");
       })
@@ -140,6 +226,7 @@ export default function VerticalBarChart() {
         .attr("x", -30) // adjust as needed for positioning
         .attr("y", -30); // adjust as needed for positioning
     });
+    //   add tooltip to tick when hovering on image
 
     // create the x axis
     svg
@@ -156,8 +243,9 @@ export default function VerticalBarChart() {
       .attr("x", dimensions.width - dimensions.margin.right - 70)
       .attr("y", dimensions.height - dimensions.margin.bottom - 20)
       .attr("text-anchor", "middle")
-      .text("Speaking Time in Seconds")
-      .attr("font-size", 10);
+      .text("Number of Words Spoken")
+      .attr("font-size", 10)
+      .attr("font-weight", "bold");
   }, [chartData, dimensions]);
 
   return <div id="vertical-bar-chart" className="mx-auto font-outfit"></div>;

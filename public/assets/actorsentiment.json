@@ -1,0 +1,98 @@
+[
+  {
+    "Yeom Je-ho": {
+      "positive": 9.4,
+      "negative": -4.6,
+      "wordcount": 8
+    },
+    "Kwak Hye-suk": {
+      "positive": 47.9,
+      "negative": -100.8,
+      "wordcount": 218
+    },
+    "Yeom Gi-Jeong": {
+      "positive": 233,
+      "negative": -311.1,
+      "wordcount": 842
+    },
+    "Yeom Chang-hee": {
+      "positive": 262.5,
+      "negative": -423.5,
+      "wordcount": 1078
+    },
+    "Yeom Mi-Jeong": {
+      "positive": 144,
+      "negative": -137.4,
+      "wordcount": 358
+    },
+    "Mr. Gu": {
+      "positive": 10,
+      "negative": 0,
+      "wordcount": 7
+    }
+  },
+  {
+    "Yeom Je-ho": {
+      "positive": 13.6,
+      "negative": -4.8,
+      "wordcount": 27
+    },
+    "Kwak Hye-suk": {
+      "positive": 52.4,
+      "negative": -130.2,
+      "wordcount": 305
+    },
+    "Yeom Gi-Jeong": {
+      "positive": 136.8,
+      "negative": -204.5,
+      "wordcount": 498
+    },
+    "Yeom Chang-hee": {
+      "positive": 160.1,
+      "negative": -206,
+      "wordcount": 526
+    },
+    "Yeom Mi-Jeong": {
+      "positive": 169.8,
+      "negative": -246.9,
+      "wordcount": 530
+    },
+    "Mr. Gu": {
+      "positive": 13.2,
+      "negative": -10,
+      "wordcount": 20
+    }
+  },
+  {
+    "Yeom Je-ho": {
+      "positive": 0,
+      "negative": 0,
+      "wordcount": 0
+    },
+    "Kwak Hye-suk": {
+      "positive": 5,
+      "negative": -37.2,
+      "wordcount": 54
+    },
+    "Yeom Gi-Jeong": {
+      "positive": 326.6,
+      "negative": -385.9,
+      "wordcount": 1053
+    },
+    "Yeom Chang-hee": {
+      "positive": 174,
+      "negative": -349.5,
+      "wordcount": 801
+    },
+    "Yeom Mi-Jeong": {
+      "positive": 146.1,
+      "negative": -256.3,
+      "wordcount": 497
+    },
+    "Mr. Gu": {
+      "positive": 18.3,
+      "negative": -82.4,
+      "wordcount": 127
+    }
+  }
+]

@@ -12,7 +12,7 @@ export type TFamily = {
 export type FamilyNames =
   | "Yeom Je-ho"
   | "Kwak Hye-suk"
-  | "Yeom Ki-jeong"
+  | "Yeom Gi-Jeong"
   | "Yeom Chang-hee"
-  | "Yeom Mi-jeong"
+  | "Yeom Mi-Jeong"
   | "Mr. Gu";

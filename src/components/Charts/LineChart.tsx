@@ -64,12 +64,14 @@ export default function LineChart() {
       .range([
         dimensions.height - dimensions.margin.bottom,
         dimensions.margin.top,
-      ]);
+      ])
+      .nice();
 
     const lineGenerator = d3
       .line<TData>()
       .x((d) => xScale(xAccessor(d)))
-      .y((d) => yScale(yAccessor(d)));
+      .y((d) => yScale(yAccessor(d)))
+      .curve(d3.curveCardinal.tension(0.5)); // Smooth curve
 
     const wrapper = d3
       .select("#wrapper")
@@ -143,7 +145,8 @@ export default function LineChart() {
       .attr("y", dimensions.height - dimensions.margin.bottom - 20)
       .attr("text-anchor", "middle")
       .text("Episodes")
-      .style("font-size", "16px");
+      .style("font-size", "16px")
+      .style("font-weight", "bold");
 
     // Draw the y axis label
     wrapper
@@ -153,7 +156,8 @@ export default function LineChart() {
       .attr("text-anchor", "middle")
       // .attr("transform", `translate(${0}, ${dimensions.height / 2}) rotate(0)`)
       .text("Sentiments")
-      .style("font-size", "16px");
+      .style("font-size", "16px")
+      .style("font-weight", "bold");
     // Tooltip creation
     const tooltip = d3
       .select("#wrapper")
@@ -250,7 +254,7 @@ export default function LineChart() {
       if (!wrapper) return;
 
       const { top, height } = wrapper.getBoundingClientRect();
-      const start = top + scrollTop - windowHeight * 0.7; // start animating when half the wrapper is in view
+      const start = top + scrollTop - windowHeight * 0.9; // start animating when half the wrapper is in view
       const end = start + height;
 
       const scrollPercent = Math.min(

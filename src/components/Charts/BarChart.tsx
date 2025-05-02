@@ -7,7 +7,22 @@ type TData = {
   positive: number;
   negative: number;
 };
-export default function BarChart() {
+
+interface SpeakerSentiment {
+  positive: number;
+  negative: number;
+  wordcount: number;
+}
+
+interface SentimentData {
+  string: SpeakerSentiment;
+}
+
+type TBarGraphProps = {
+  currentEpisode?: number;
+};
+export default function BarChart(props: TBarGraphProps) {
+  const { currentEpisode = 1 } = props;
   const [chartData, setChartData] = useState<TData[]>([]);
   const dimensions = React.useMemo(
     () => ({
@@ -20,12 +35,16 @@ export default function BarChart() {
   );
 
   useEffect(() => {
-    d3.csv("/assets/actor_sentiments.csv").then((data) => {
-      console.log({ data });
-      const processedData = data.map((item) => {
-        const character = item?.Character as FamilyNames;
-        const positive = Number(item?.Positive);
-        const negative = Number(item.Negative);
+    d3.json("/assets/actorsentiment.json").then((data) => {
+      if (!data && !currentEpisode) return;
+      // console.log(data);
+      const typedData = data as SentimentData[];
+      const indexedData = typedData[currentEpisode - 1];
+
+      const processedData = Object.entries(indexedData).map(([key, value]) => {
+        const character = key as FamilyNames;
+        const positive = Number(value.positive);
+        const negative = Number(value.negative);
 
         return {
           character,
@@ -33,9 +52,10 @@ export default function BarChart() {
           negative,
         };
       });
+
       setChartData(processedData);
     });
-  }, []);
+  }, [currentEpisode]);
 
   useEffect(() => {
     console.log({ chartData });
@@ -90,30 +110,77 @@ export default function BarChart() {
     // Positive bars
     svg
       .selectAll(".bar")
-      .data(chartData)
-      .enter()
-      .append("rect")
-      .attr("class", "bar")
-      .attr("x", (d) => xScale(d.character) || 0)
-      .attr("y", (d) => yScale(d.positive))
-      .attr("width", xScale.bandwidth())
-      .attr("height", (d) => Math.abs(yScale(d.positive) - yScale(0)))
-      .attr("fill", "orange")
-      .attr("opacity", 0.8);
+      .data(chartData, (d) => (d as TData).character)
+      .join(
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", (d) => xScale(d.character) || 0)
+            .attr("y", yScale(0))
+            .attr("width", xScale.bandwidth())
+            .attr("height", 0)
+            .attr("fill", "orange")
+            .attr("opacity", 0.8)
+            .call((enter) =>
+              enter
+                .transition()
+                .duration(600)
+                .attr("y", (d) => yScale(d.positive))
+                .attr("height", (d) => Math.abs(yScale(d.positive) - yScale(0)))
+            ),
+        (update) =>
+          update
+            .transition()
+            .duration(600)
+            .attr("y", (d) => yScale(d.positive))
+            .attr("height", (d) => Math.abs(yScale(d.positive) - yScale(0))),
+        (exit) =>
+          exit
+            .transition()
+            .duration(300)
+            .attr("height", 0)
+            .attr("y", yScale(0))
+            .remove()
+      );
 
     // Negative bars
+
     svg
       .selectAll(".bar2")
-      .data(chartData)
-      .enter()
-      .append("rect")
-      .attr("class", "bar2")
-      .attr("x", (d) => xScale(d.character) || 0)
-      .attr("y", () => yScale(0))
-      .attr("width", xScale.bandwidth())
-      .attr("height", (d) => Math.abs(yScale(0) - yScale(d.negative)))
-      .attr("fill", "steelblue")
-      .attr("opacity", 0.8);
+      .data(chartData, (d) => (d as TData).character)
+      .join(
+        (enter) =>
+          enter
+            .append("rect")
+            .attr("class", "bar2")
+            .attr("x", (d) => xScale(d.character) || 0)
+            .attr("y", yScale(0))
+            .attr("width", xScale.bandwidth())
+            .attr("height", 0)
+            .attr("fill", "steelblue")
+            .attr("opacity", 0.8)
+            .call((enter) =>
+              enter
+                .transition()
+                .duration(600)
+                .attr("y", () => yScale(0))
+                .attr("height", (d) => Math.abs(yScale(0) - yScale(d.negative)))
+            ),
+        (update) =>
+          update
+            .transition()
+            .duration(600)
+            .attr("y", (d) => yScale(d.negative))
+            .attr("height", (d) => Math.abs(yScale(0) - yScale(d.negative))),
+        (exit) =>
+          exit
+            .transition()
+            .duration(300)
+            .attr("height", 0)
+            .attr("y", yScale(0))
+            .remove()
+      );
 
     //   add tooltip
     const tooltip = d3

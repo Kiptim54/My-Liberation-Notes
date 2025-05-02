@@ -23,7 +23,7 @@ export default function FamilyIntro() {
                   key={member.name}
                   src={`${member.image || ""}`}
                   alt={member.name}
-                  className={`rounded-full border-[10px] cursor-pointer ${member.colorHex}`}
+                  className={`cursor-pointer h-44 w-44 ${member.colorHex}`}
                   onClick={() => {
                     setSelectedFamilyMember(member);
                     setShowFamilyMember(true);
@@ -43,7 +43,7 @@ export default function FamilyIntro() {
                     key={selectedFamilyMember.name}
                     src={`${selectedFamilyMember.image || ""}`}
                     alt={selectedFamilyMember.name}
-                    className={`rounded-full h-32 w-32 border-[6px]  ${selectedFamilyMember.colorHex} `}
+                    className={`rounded-full h-42 w-42   ${selectedFamilyMember.colorHex} `}
                     onClick={() => {
                       setSelectedFamilyMember(selectedFamilyMember);
                       setShowFamilyMember(true);
