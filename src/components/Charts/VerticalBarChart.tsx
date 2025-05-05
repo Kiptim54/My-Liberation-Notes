@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FamilyNames } from "../../types";
 import * as d3 from "d3";
-import { characterPathToImage, familyList } from "../../constants";
+import { characterPathToImage, getFamilyColor } from "../../constants";
 type TData = {
   character: FamilyNames;
   wordCount: number;
@@ -22,6 +22,7 @@ interface SentimentData {
 }
 export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
   const [chartData, setChartData] = useState<TData[]>([]);
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const dimensions = React.useMemo(
     () => ({
       width: 800,
@@ -55,22 +56,25 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
 
   useEffect(() => {
     // clean up the svg before drawing
-    d3.select("#vertical-bar-chart").selectAll("*").remove();
+    const svg = d3.select(svgRef.current);
+    // d3.select("#vertical-bar-chart").selectAll("text").remove();
     // x and y axis accessors
     const yAccessor = (d: TData) => d.character;
     const xAccessor = (d: TData) => Number(d.wordCount);
+    const sortedData = [...chartData].sort((a, b) => b.wordCount - a.wordCount);
+
     // d3 scales
     // x scales
     const yScale = d3
       .scaleBand()
-      .domain(chartData.map(yAccessor))
+      .domain(sortedData.map(yAccessor))
       .range([
         dimensions.margin.top,
         dimensions.height - dimensions.margin.bottom,
       ])
       .padding(0.1);
 
-    const minMaxTime = d3.extent(chartData, xAccessor);
+    const minMaxTime = d3.extent(sortedData, xAccessor);
     console.log({ minMaxTime });
     // y scale
     const xScale = d3
@@ -83,19 +87,82 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
       .nice();
 
     // create the svg
-    const svg = d3
-      .select("#vertical-bar-chart")
-      .append("svg")
+    svg
       .attr("width", dimensions.width)
       .attr("height", dimensions.height)
       .attr("viewBox", `0 0 ${dimensions.width} ${dimensions.height}`)
       .attr(
         "style",
-        "max-width: 100%; width:90%; height: 100%; height: intrinsic; background:#EADFCF; padding:12; "
+        "max-width: 100%; width:90%; height: 100%; height: intrinsic; background:#EADFCF; padding:12; posiytion:relative "
       );
     // create the bars
 
     //   add tooltip
+
+    const bars = svg
+      .selectAll("rect")
+      .data(sortedData, (d) => (d as TData).character);
+
+    bars.join(
+      (enter) =>
+        enter
+          .append("rect")
+          .attr("x", dimensions.margin.left)
+          .attr("y", (d) => yScale(d.character) || 0)
+          .attr("width", () => xScale(0))
+          .attr("height", yScale.bandwidth())
+          .attr("z-index", 1)
+          .attr("fill", (d) => {
+            const color = getFamilyColor(d.character);
+            return color ? color : "steelblue";
+          })
+          .attr("rx", 5)
+          .attr("ry", 5)
+          .attr("opacity", 0.9)
+          .attr("class", "bar")
+          .call((enter) => {
+            enter
+              .transition()
+              .duration(1000)
+              .attr("y", (d) => yScale(d.character) || 0)
+              .attr("width", (d) => xScale(xAccessor(d)))
+              .attr("height", yScale.bandwidth())
+              .attr("fill", (d) => {
+                const color = getFamilyColor(d.character);
+                return color ? color : "steelblue";
+              })
+              .attr("rx", 5)
+              .attr("ry", 5)
+              .attr("opacity", 0.9);
+          }),
+
+      (update) =>
+        update
+          .transition()
+          .duration(1000)
+          .attr("y", (d) => yScale(yAccessor(d)) || 0)
+          .attr("width", (d) => xScale(xAccessor(d)))
+          .attr("height", yScale.bandwidth())
+          .attr("fill", (d) => {
+            const color = getFamilyColor(d.character);
+            return color ? color : "steelblue";
+          })
+          .attr("rx", 5)
+          .attr("ry", 5)
+          .attr("opacity", 0.9),
+      (exit) =>
+        exit
+          .transition()
+          .duration(300)
+          .attr("height", 0)
+          .attr("width", () => xScale(0))
+          .attr("y", xScale(0))
+          .remove()
+      // .remove
+    );
+    // update the bars
+
+    // add tooltip
     const tooltip = d3
       .select("#vertical-bar-chart")
       .append("div")
@@ -106,147 +173,97 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
       .style("border-radius", "5px")
       .style("padding", "5px")
       .style("pointer-events", "none");
-
     svg
       .selectAll("rect")
-      .data(chartData, (d) => (d as TData).character)
-      .join(
-        (enter) =>
-          enter
-            .append("rect")
-            .attr("x", dimensions.margin.left)
-            .attr("y", (d) => yScale(yAccessor(d)) || 0)
-            .attr("width", () => xScale(0))
-            .attr("height", yScale.bandwidth())
-            .attr("fill", (_d, index) => {
-              const color = familyList[index]?.colorHexVal;
-              return color ? color : "steelblue";
-            })
-            .attr("rx", 5)
-            .attr("ry", 5)
-            .attr("opacity", 0.9)
-            .attr("class", "bar")
-            .call((enter) => {
-              enter
-                .transition()
-                .duration(1000)
-                .attr("y", (d) => yScale(yAccessor(d)) || 0)
-                .attr("width", (d) => xScale(xAccessor(d)))
-                .attr("height", yScale.bandwidth())
-                .attr("fill", (_d, index) => {
-                  const color = familyList[index]?.colorHexVal;
-                  return color ? color : "steelblue";
-                })
-                .attr("rx", 5)
-                .attr("ry", 5)
-                .attr("opacity", 0.9);
-            }),
-
-        (update) =>
-          update
-            .transition()
-            .duration(1000)
-            .attr("y", (d) => yScale(yAccessor(d)) || 0)
-            .attr("width", (d) => xScale(xAccessor(d)))
-            .attr("height", yScale.bandwidth())
-            .attr("fill", (_d, index) => {
-              const color = familyList[index]?.colorHexVal;
-              return color ? color : "steelblue";
-            })
-            .attr("rx", 5)
-            .attr("ry", 5)
-            .attr("opacity", 0.9),
-        (exit) =>
-          exit
-            .transition()
-            .duration(300)
-            .attr("height", 0)
-            .attr("width", () => xScale(0))
-            .attr("y", xScale(0))
-            .remove()
-        // .remove
-      );
-    // update the bars
-
-    // svg
-    //   .selectAll("rect")
-    //   .data(chartData)
-    //   .enter()
-    //   .append("rect")
-    //   .attr("x", dimensions.margin.left)
-    //   .attr("y", (d) => yScale(yAccessor(d)) || 0)
-    //   .attr("width", (d) => xScale(xAccessor(d)))
-    //   .attr("height", yScale.bandwidth())
-    //   .attr("fill", (_d, index) => {
-    //     const color = familyList[index]?.colorHexVal;
-    //     return color ? color : "steelblue";
-    //   })
-    //   .attr("rx", 5)
-    //   .attr("ry", 5)
-    //   .attr("opacity", 0.9);
-
-    svg
-      .selectAll("rect")
-      .on("mouseover", (event, d) => {
+      .on("mouseover", function (event, d) {
+        console.log({ event });
         const data = d as TData;
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip
           .html(
             `${
               data.character
-            }: <b>${data.wordCount.toLocaleString()} Words Spoken </b>`
+            }: <b>${data?.wordCount?.toLocaleString()} Words Spoken </b>`
           )
-          .style("left", event.pageX + "px")
-          .style("top", event.pageY - 28 + "px");
+          .style("left", 0 + "px")
+          .style("top", 0 + "px");
       })
       .on("mouseout", function () {
         tooltip.transition().duration(500).style("opacity", 0);
       });
 
     // create the y axis
-    svg
-      .append("g")
-      .attr("transform", `translate(${dimensions.margin.left}, 0)`)
-      .call(d3.axisLeft(yScale));
 
-    svg.selectAll(".tick").each(function (_d, i) {
-      const character = chartData[i]?.character;
-      if (!character) return;
-      const imageUrl = characterPathToImage(character);
+    const yAxis = d3.axisLeft(yScale);
+    const yAxisGroup = svg
+      .selectAll<SVGGElement, null>(".y-axis")
+      .data([null])
+      .join("g")
+      .attr("class", "y-axis")
+      .attr("transform", `translate(${dimensions.margin.left}, 0)`);
+    yAxisGroup
+      .transition()
+      .duration(800)
+      .call(yAxis as d3.Axis<string>); // Explicitly typing yAxis to avoid 'any'
 
-      // Remove existing text
-      d3.select(this).select("text").remove();
-
-      // Append image instead
-      d3.select(this)
-        .append("image")
-        .attr("href", imageUrl) // modern browsers prefer `href` over `xlink:href`
-        .attr("width", 60)
-        .attr("height", 60)
-        .attr("x", -30) // adjust as needed for positioning
-        .attr("y", -30); // adjust as needed for positioning
-    });
-    //   add tooltip to tick when hovering on image
-
-    // create the x axis
-    svg
-      .append("g")
+    // // create the x axis
+    const xAxis = d3.axisBottom(xScale).ticks(5);
+    const xAxisGroup = svg
+      .selectAll<SVGGElement, null>(".x-axis")
+      .data([null])
+      .join("g")
+      .attr("class", "x-axis")
       .attr(
         "transform",
         `translate(0, ${dimensions.height - dimensions.margin.bottom})`
-      )
-      .call(d3.axisBottom(xScale).ticks(5));
+      );
+    xAxisGroup
+      .transition()
+      .duration(800)
+      .call(xAxis as d3.Axis<number>); // Explicitly typing xAxis to avoid 'any'
+
+    // add image to y axis ticks
+
+    svg
+      .select(".y-axis")
+      .selectAll(".tick")
+      .each(function (_d, i) {
+        const character = sortedData[i]?.character;
+        if (!character) return;
+        const imageUrl = characterPathToImage(character);
+        d3.select(this).select("text").remove();
+
+        d3.select(this)
+          .selectAll("image")
+          .data([imageUrl])
+          .join("image")
+          .attr("href", imageUrl)
+          .attr("width", 60)
+          .attr("height", 60)
+          .attr("x", -30)
+          .attr("y", -30);
+      });
+
+    //   add tooltip to tick when hovering on image
 
     // add labels
     svg
-      .append("text")
+      .selectAll("#x-axis-label")
+      .data([null])
+      .join("text")
+      .attr("id", "x-axis-label")
       .attr("x", dimensions.width - dimensions.margin.right - 70)
       .attr("y", dimensions.height - dimensions.margin.bottom - 20)
       .attr("text-anchor", "middle")
       .text("Number of Words Spoken")
-      .attr("font-size", 10)
-      .attr("font-weight", "bold");
+      .attr("font-size", 10);
+
+    yAxisGroup.raise();
   }, [chartData, dimensions]);
 
-  return <div id="vertical-bar-chart" className="mx-auto font-outfit"></div>;
+  return (
+    <div id="vertical-bar-chart" className="mx-auto font-outfit relative">
+      <svg ref={svgRef} className=""></svg>
+    </div>
+  );
 }

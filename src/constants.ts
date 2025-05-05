@@ -82,6 +82,26 @@ export const characterPathToImage = (character: FamilyNames) => {
   }
 };
 
+export const getFamilyColor = (character: FamilyNames) => {
+  switch (character) {
+    case "Yeom Je-ho":
+      return familyList[0].colorHexVal;
+
+    case "Kwak Hye-suk":
+      return familyList[1].colorHexVal;
+    case "Yeom Gi-Jeong":
+      return familyList[2].colorHexVal;
+    case "Yeom Chang-hee":
+      return familyList[3].colorHexVal;
+    case "Yeom Mi-Jeong":
+      return familyList[4].colorHexVal;
+    case "Mr. Gu":
+      return familyList[5].colorHexVal;
+    default:
+      return familyList[0].colorHexVal;
+  }
+};
+
 export const actorSentiments = [
   {
     "Yeom Je-ho": {

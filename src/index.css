@@ -89,3 +89,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+#vertical-bar-chart {
+  position: relative;
+ 
+}
+
+#vertical-bar-chart .tick image {
+  position: relative;
+  z-index: 10;
+}
+
+#vertical-bar-chart rect.bar {
+  position: relative;
+  z-index: 1;
+}
