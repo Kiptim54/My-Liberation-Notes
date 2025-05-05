@@ -16,7 +16,7 @@ import {
 export default function FamilySpeakingTime() {
   const [currentEpisode, setCurrentEpisode] = useState<number>(1);
   return (
-    <div className="bg-secondaryLight md:min-h-screen text-black p-2 md:p-10  mx-auto w-full">
+    <div className="bg-secondaryLight h-auto md:min-h-screen text-black p-2 md:p-10  mx-auto w-full">
       <div className=" flex flex-col md:flex-row justify-between items-start p-4">
         <div className="md:w-1/2 flex-2">
           <h3 className="text-2xl md:text-3xl font-bold font-outfit mb-2">
@@ -28,7 +28,7 @@ export default function FamilySpeakingTime() {
             their speech frequency?
           </p>
         </div>
-        <div className="my-4 md:my-0 flex flex-row items-end gap-2 ">
+        <div className="my-4 md:my-0 flex flex-row items-end gap-1 ">
           <ArrowLeftCircleIcon
             onClick={() => {
               if (currentEpisode === 1) return;
@@ -78,8 +78,9 @@ export default function FamilySpeakingTime() {
           />
         </div>
       </div>
-
-      <VerticalBarChart currentEpisode={currentEpisode} />
+      <div className="container mx-auto">
+        <VerticalBarChart currentEpisode={currentEpisode} />
+      </div>
     </div>
   );
 }
