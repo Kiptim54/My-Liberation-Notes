@@ -103,6 +103,8 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
       .selectAll("rect")
       .data(sortedData, (d) => (d as TData).character);
 
+    const heightBars = yScale.bandwidth();
+
     bars.join(
       (enter) =>
         enter
@@ -110,7 +112,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
           .attr("x", dimensions.margin.left)
           .attr("y", (d) => yScale(d.character) || 0)
           .attr("width", () => xScale(0))
-          .attr("height", yScale.bandwidth())
+          .attr("height", heightBars)
           .attr("z-index", 1)
           .attr("fill", (d) => {
             const color = getFamilyColor(d.character);
@@ -126,7 +128,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
               .duration(1000)
               .attr("y", (d) => yScale(d.character) || 0)
               .attr("width", (d) => xScale(xAccessor(d)))
-              .attr("height", yScale.bandwidth())
+              .attr("height", heightBars)
               .attr("fill", (d) => {
                 const color = getFamilyColor(d.character);
                 return color ? color : "steelblue";
@@ -142,7 +144,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
           .duration(1000)
           .attr("y", (d) => yScale(yAccessor(d)) || 0)
           .attr("width", (d) => xScale(xAccessor(d)))
-          .attr("height", yScale.bandwidth())
+          .attr("height", heightBars)
           .attr("fill", (d) => {
             const color = getFamilyColor(d.character);
             return color ? color : "steelblue";
@@ -238,10 +240,11 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
           .data([imageUrl])
           .join("image")
           .attr("href", imageUrl)
-          .attr("width", 60)
-          .attr("height", 60)
-          .attr("x", -30)
-          .attr("y", -30);
+          // use yscale.range() to get the y position
+          .attr("x", -heightBars / 2) // adjust as needed for positioning
+          .attr("y", -heightBars / 2) // adjust as needed for positioning
+          .attr("width", heightBars)
+          .attr("height", heightBars);
       });
 
     //   add tooltip to tick when hovering on image

@@ -77,7 +77,7 @@ export default function FamilySentiment() {
           />
         </div>
       </div>
-      <div className="md:min-h-screen">
+      <div className="md:min-h-screen container mx-auto">
         <BarChart currentEpisode={currentEpisode} />
       </div>
     </div>
