@@ -256,6 +256,8 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
       .attr("text-anchor", "middle")
       .text("Number of Words Spoken")
       .attr("font-size", 10);
+
+    yAxisGroup.raise();
   }, [chartData, dimensions]);
 
   return (

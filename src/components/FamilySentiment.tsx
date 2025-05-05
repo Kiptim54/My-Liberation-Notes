@@ -1,5 +1,9 @@
 import BarChart from "./Charts/BarChart";
 import { useState } from "react";
+import {
+  ArrowLeftCircleIcon,
+  ArrowRightCircleIcon,
+} from "@heroicons/react/24/outline";
 
 import {
   Select,
@@ -23,30 +27,54 @@ export default function FamilySentiment() {
             and compare their positive and negative sentiments over time...
           </p>
         </div>
-        <div className="my-4 md:my-0 ">
-          <p className="text-sm font-outfit mb-3">Filter by Episode:</p>
-          <Select
-            onValueChange={(value) => {
-              const episode = Number(value.split(" ")[1]);
-              setCurrentEpisode(episode);
+        <div className="my-4 md:my-0 flex flex-row items-end gap-2 ">
+          <ArrowLeftCircleIcon
+            onClick={() => {
+              if (currentEpisode === 1) return;
+              setCurrentEpisode(currentEpisode - 1);
             }}
-            value={`Episode ${currentEpisode}`}
-            defaultValue={`Episode ${currentEpisode}`}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue
-                placeholder="Select Episode"
-                className="font-outfit"
-              />
-            </SelectTrigger>
-            <SelectContent className="max-h-[180px]">
-              {[1, 2, 3].map((episode) => (
-                <SelectItem key={episode} value={`Episode ${episode}`}>
-                  Episode {episode}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            className={`${
+              currentEpisode === 1
+                ? "text-gray-400"
+                : "text-black cursor-pointer"
+            } size-6  `}
+          />
+          <div>
+            <p className="text-sm font-outfit mb-2">Filter by Episode:</p>
+            <Select
+              onValueChange={(value) => {
+                const episode = Number(value.split(" ")[1]);
+                setCurrentEpisode(episode);
+              }}
+              value={`Episode ${currentEpisode}`}
+              defaultValue={`Episode ${currentEpisode}`}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue
+                  placeholder="Select Episode"
+                  className="font-outfit"
+                />
+              </SelectTrigger>
+              <SelectContent className="max-h-[180px]">
+                {[1, 2, 3].map((episode) => (
+                  <SelectItem key={episode} value={`Episode ${episode}`}>
+                    Episode {episode}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <ArrowRightCircleIcon
+            onClick={() => {
+              if (currentEpisode === 3) return;
+              setCurrentEpisode(currentEpisode + 1);
+            }}
+            className={`${
+              currentEpisode === 3
+                ? "text-gray-400"
+                : " text-black cursor-pointer "
+            } size-6 `}
+          />
         </div>
       </div>
       <div className="md:min-h-screen">
