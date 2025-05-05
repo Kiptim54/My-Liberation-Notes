@@ -93,7 +93,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
       .attr("viewBox", `0 0 ${dimensions.width} ${dimensions.height}`)
       .attr(
         "style",
-        "max-width: 100%; width:90%; height: 100%; height: intrinsic; background:#EADFCF; padding:12; "
+        "max-width: 100%; width:90%; height: 100%; height: intrinsic; background:#EADFCF; padding:12; posiytion:relative "
       );
     // create the bars
 
@@ -162,6 +162,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
     );
     // update the bars
 
+    // add tooltip
     const tooltip = d3
       .select("#vertical-bar-chart")
       .append("div")
@@ -172,20 +173,20 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
       .style("border-radius", "5px")
       .style("padding", "5px")
       .style("pointer-events", "none");
-
-    // add tooltip to bars
     svg
-      .selectAll(".bar")
-      .on("mouseover", (d) => {
+      .selectAll("rect")
+      .on("mouseover", function (event, d) {
+        console.log({ event });
         const data = d as TData;
         tooltip.transition().duration(200).style("opacity", 0.9);
-        tooltip.html(
-          `${
-            data.character
-          }: <b>${data.wordCount.toLocaleString()} Words Spoken </b>`
-        );
-        // .style("left", event.pageX + "px")
-        // .style("top", event.pageY - 28 + "px");
+        tooltip
+          .html(
+            `${
+              data.character
+            }: <b>${data?.wordCount?.toLocaleString()} Words Spoken </b>`
+          )
+          .style("left", 0 + "px")
+          .style("top", 0 + "px");
       })
       .on("mouseout", function () {
         tooltip.transition().duration(500).style("opacity", 0);
@@ -261,8 +262,8 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
   }, [chartData, dimensions]);
 
   return (
-    <div id="vertical-bar-chart" className="mx-auto font-outfit">
-      <svg ref={svgRef}></svg>
+    <div id="vertical-bar-chart" className="mx-auto font-outfit relative">
+      <svg ref={svgRef} className=""></svg>
     </div>
   );
 }
