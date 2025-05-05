@@ -162,6 +162,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
     );
     // update the bars
 
+    // add tooltip
     const tooltip = d3
       .select("#vertical-bar-chart")
       .append("div")
