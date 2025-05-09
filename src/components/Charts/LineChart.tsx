@@ -383,7 +383,7 @@ export default function LineChart(props: TLineChartProps) {
     window.addEventListener("scroll", handleScroll);
 
     // text guide
-    if (showTextGuide && showSentiments && chartData.length > 0) {
+    if (showTextGuide && chartData.length > 0) {
       // draw line for all
 
       // wrapper
