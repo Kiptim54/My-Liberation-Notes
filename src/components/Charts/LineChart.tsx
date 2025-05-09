@@ -60,7 +60,6 @@ export default function LineChart() {
     const xAccessor = (d: TData) => d.episode;
     const yAccessor = (d: TData) => d.sentiment;
 
-    const minMaxEpisodes = d3.extent(chartData, (d) => d.episode) || [1, 16];
     const minMaxSentiment = d3.extent(chartData, (d) => d.sentiment) || [
       -30, 30,
     ];
@@ -74,7 +73,7 @@ export default function LineChart() {
     // x scales
     const xScale = d3
       .scaleLinear()
-      .domain(minMaxEpisodes as [number, number])
+      .domain([1, 16])
       .range([
         dimensions.margin.left,
         dimensions.width - dimensions.margin.right,
@@ -124,7 +123,12 @@ export default function LineChart() {
         "transform",
         `translate(0, ${dimensions.height - dimensions.margin.bottom})`
       )
-      .call(d3.axisBottom(xScale));
+      .call(
+        d3
+          .axisBottom(xScale)
+          .tickValues(d3.range(1, 17))
+          .tickFormat(d3.format("d"))
+      );
 
     xAxis.selectAll("text").attr("fill", "black").style("font-size", "12px");
 
@@ -226,167 +230,84 @@ export default function LineChart() {
       .text("Ratings")
       .style("font-size", "16px")
       .style("font-weight", "bold");
-    // Tooltip creation
-    const tooltip = d3
-      .select("#wrapper")
-      .append("div")
-      .attr("id", "tooltip")
-      .style("position", "absolute")
-      .style("background", "white")
-      .style("padding", "6px 10px")
-      .style("border", "1px solid #ccc")
-      .style("border-radius", "4px")
-      .style("pointer-events", "none")
-      .style("font-size", "12px")
-      .style("display", "none")
-      .style("z-index", "10");
 
-    // ratings tooltip
-    const ratingsTooltip = d3
-      .select("#wrapper")
-      .append("div")
-      .attr("id", "ratings-tooltip")
-      .style("position", "absolute")
-      .style("background", "white")
-      .style("padding", "6px 10px")
-      .style("border", "1px solid #ccc")
-      .style("border-radius", "4px")
-      .style("pointer-events", "none")
-      .style("font-size", "12px")
-      .style("display", "none")
-      .style("z-index", "10");
-    // Add circles for each data point
+    // Tiny dots for each episode
     wrapper
-      .selectAll(".sentiment-circle")
+      .selectAll(".dot-sentiment")
       .data(chartData)
       .enter()
       .append("circle")
-      .attr("class", "sentiment-circle")
+      .attr("class", "dot-sentiment")
       .attr("cx", (d) => xScale(d.episode))
       .attr("cy", (d) => yScale(d.sentiment))
-      .attr("r", 5)
-      .attr("fill", (d) => {
-        // at the moment I cannot sfind a color for the negatives. I will play around with that on Figma
-        if (d.sentiment < 0) {
-          return "#BF894C";
-        } else {
-          return "#BF894C";
-        }
-      })
-      .on("mouseover", function (_event, d) {
-        tooltip
-          .style("display", "block")
-          .html(
-            `<div class="text-black"><strong >Episode:</strong> ${
-              d.episode
-            }<br/><strong">Sentiment:</strong> ${d.sentiment.toFixed(2)}</div>`
-          );
-      })
-      .on("mousemove", function (event, d) {
-        const [mouseX, mouseY] = d3.pointer(event);
-        // get episode
+      .attr("r", 4)
+      .attr("fill", "#BF894C");
 
-        // const bisect = d3.bisector((d: TData) => d.episode).right;
-        // const index = bisect(chartData, mouseX);
-        // const closestDataPoint = chartData[index];
-
-        const tooltipWidth = 120;
-        const tooltipHeight = 50;
-
-        // Calculate initial position
-        let left = mouseX + 10;
-        let top = mouseY - tooltipHeight - 10;
-
-        // Adjust if tooltip goes beyond the right edge
-        if (left + tooltipWidth > dimensions.width - 10) {
-          left = mouseX - tooltipWidth - 20;
-        }
-
-        // Adjust if tooltip goes above the top edge
-        if (top < 0) {
-          top = mouseY + 40;
-        }
-
-        tooltip
-          .style("left", `${left}px`)
-          .style("top", `${top}px`)
-          .style("display", "block")
-          .html(
-            `<strong>Episode:</strong> ${d?.episode}<br/>
-             <strong>Sentiment:</strong> ${d.sentiment.toFixed(2)}
-             <strong>Ratings:</strong> ${ratings[d.episode - 1]?.rating.toFixed(
-               2
-             )} <br/>
-             `
-          );
-      })
-      .on("mouseout", function () {
-        tooltip.style("display", "none");
-      });
-
-    // // Add circles for each data point for ratings
     wrapper
-      .selectAll(".ratings-circle")
+      .selectAll(".dot-rating")
       .data(ratings)
       .enter()
       .append("circle")
-      .attr("class", "ratings-circle")
+      .attr("class", "dot-rating")
       .attr("cx", (d) => xScale(d.episode))
       .attr("cy", (d) => yScaleRatings(d.rating))
-      .attr("r", 5)
-      .attr("fill", "#8E734B")
-      // at the moment I cannot sfind a color for the negatives. I will play around with that on Figma
+      .attr("r", 4)
+      .attr("fill", "#8E734B");
 
-      .on("mouseover", function (_event, d) {
-        ratingsTooltip
+    // Tooltip creation
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("id", "tooltip")
+      .style("position", "absolute")
+      .style("pointer-events", "none")
+      .style("background", "white")
+      .style("padding", "6px 10px")
+      .style("border", "1px solid #ccc")
+      .style("border-radius", "4px")
+      .style("font-size", "14px")
+      .style("display", "none")
+      .style("z-index", "9999");
+
+    // 2) Overlay rect to capture mouse events
+    wrapper
+      .append("rect")
+      .attr(
+        "width",
+        dimensions.width - dimensions.margin.left - dimensions.margin.right
+      )
+      .attr(
+        "height",
+        dimensions.height - dimensions.margin.top - dimensions.margin.bottom
+      )
+      .attr(
+        "transform",
+        `translate(${dimensions.margin.left}, ${dimensions.margin.top})`
+      )
+      .style("fill", "transparent")
+      .style("pointer-events", "all")
+      .on("pointermove", (event) => {
+        // 1) pointer relative to <g>
+        const [mx] = d3.pointer(event, wrapper.node());
+
+        // 2) bisect and pick the nearest data point
+        const x0 = xScale.invert(mx);
+        const bisect = d3.bisector((d: TData) => d.episode).left;
+        const i = bisect(chartData, x0);
+        const d = chartData[i - 1] ?? chartData[0];
+        const r = ratings.find((rt) => rt.episode === d.episode);
+
+        // 3) position the tooltip
+        tooltip
           .style("display", "block")
-          .html(
-            `<div class="text-black"><strong >Episode:</strong> ${
-              d.episode
-            }<br/><strong">Ratings:</strong> ${d.rating.toFixed(2)}</div>`
-          );
+          .style("left", event.pageX + 10 + "px")
+          .style("top", event.pageY - 30 + "px").html(`
+            <strong>Episode:</strong>  ${d.episode}<br/>
+            <strong>Sentiment:</strong>${d.sentiment.toFixed(2)}<br/>
+            <strong>Rating:</strong>   ${r?.rating.toFixed(2) ?? "N/A"}
+          `);
       })
-      .on("mousemove", function (event, d) {
-        const [mouseX, mouseY] = d3.pointer(event);
-        // get episode
-
-        // const bisect = d3.bisector((d: TData) => d.episode).right;
-        // const index = bisect(chartData, mouseX);
-        // const closestDataPoint = chartData[index];
-
-        const tooltipWidth = 120;
-        const tooltipHeight = 50;
-
-        // Calculate initial position
-        let left = mouseX + 10;
-        let top = mouseY - tooltipHeight - 10;
-
-        // Adjust if tooltip goes beyond the right edge
-        if (left + tooltipWidth > dimensions.width - 10) {
-          left = mouseX - tooltipWidth - 20;
-        }
-
-        // Adjust if tooltip goes above the top edge
-        if (top < 0) {
-          top = mouseY + 40;
-        }
-
-        ratingsTooltip
-          .style("left", `${left}px`)
-          .style("top", `${top}px`)
-          .style("display", "block")
-          .html(
-            `<strong>Episode:</strong> ${d?.episode}<br/>
-           <strong>Ratings:</strong> ${d.rating.toFixed(2)}
-           <strong>Sentiment:</strong> ${chartData[
-             d.episode - 1
-           ]?.sentiment.toFixed(2)} <br/>
-           `
-          );
-      })
-      .on("mouseout", function () {
-        ratingsTooltip.style("display", "none");
-      });
+      .on("pointerout", () => tooltip.style("display", "none"));
 
     const path = d3.select(".animated-line").node() as SVGPathElement;
     const pathRatings = d3
@@ -414,7 +335,7 @@ export default function LineChart() {
       if (!wrapper) return;
 
       const { top, height } = wrapper.getBoundingClientRect();
-      const start = top + scrollTop - windowHeight * 0.5; // start animating when half the wrapper is in view
+      const start = top + scrollTop - windowHeight * 0.9; // start animating when half the wrapper is in view
       const end = start + height;
 
       const scrollPercent = Math.min(
@@ -435,5 +356,5 @@ export default function LineChart() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [chartData, dimensions, ratings]);
 
-  return <div id="wrapper" className="relative  mx-auto overflow-hidden"></div>;
+  return <div id="wrapper" className="relative  mx-auto"></div>;
 }
