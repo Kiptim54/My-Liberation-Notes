@@ -4,10 +4,55 @@ import { Checkbox } from "./ui/checkbox";
 
 export default function EpisodesSentiments() {
   const [showTextGuide, setShowTextGuide] = useState(false);
+  const [showRatings, setShowRatings] = useState(true);
+  const [showSentiments, setShowSentiments] = useState(true);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen bg-secondaryLight">
       <div className="flex flex-col justify-center p-6 gap-4">
-        <LineChart showTextGuide={showTextGuide} />
+        <div className="flex justify-center items-center">
+          <div className="items-top flex space-x-2 px-6">
+            <Checkbox
+              id="terms3"
+              className="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-secondary2 data-[state=checked]:text-primary-foreground"
+              checked={showRatings}
+              onCheckedChange={(checked) => {
+                setShowRatings(checked === true);
+              }}
+            />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="terms1"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Show Ratings
+              </label>
+            </div>
+          </div>
+          <div className="items-top flex space-x-2 px-6">
+            <Checkbox
+              id="terms2"
+              // change color of checkbox to secondary3 but keep checkmark white
+              className="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-secondary3 data-[state=checked]:text-primary-foreground"
+              checked={showSentiments}
+              onCheckedChange={(checked) => {
+                setShowSentiments(checked === true);
+              }}
+            />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="terms1"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Show Sentiments
+              </label>
+            </div>
+          </div>
+        </div>
+        <LineChart
+          showTextGuide={showTextGuide}
+          showRatings={showRatings}
+          showSentiments={showSentiments}
+        />
         <div className="items-top flex space-x-2 px-6">
           <Checkbox
             id="terms1"
@@ -37,13 +82,13 @@ export default function EpisodesSentiments() {
             <span className="relative z-10 font-semibold ">
               Sentiments
             </span>{" "}
-            <span className="bg-secondary2 inset-0 absolute -z-0 w-[80%] opacity-60 mx-auto"></span>{" "}
+            <span className="bg-secondary3 inset-0 absolute -z-0 w-[80%] opacity-60 mx-auto"></span>{" "}
           </span>{" "}
           vs{" "}
           <span className="relative">
             {" "}
             <span className="relative z-10 font-semibold ">Ratings</span>
-            <span className="bg-secondary3 inset-0 absolute -z-0 w-[80%] opacity-80 mx-auto"></span>
+            <span className="bg-secondary2 inset-0 absolute -z-0 w-[80%] opacity-80 mx-auto"></span>
           </span>
           :
         </p>

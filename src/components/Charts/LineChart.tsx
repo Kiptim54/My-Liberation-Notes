@@ -13,10 +13,12 @@ type TRatings = {
 
 type TLineChartProps = {
   showTextGuide: boolean;
+  showRatings: boolean;
+  showSentiments: boolean;
 };
 // chart to analyse the emotional growth in the episodes using sentiment analysis
 export default function LineChart(props: TLineChartProps) {
-  const { showTextGuide } = props;
+  const { showTextGuide, showRatings, showSentiments } = props;
 
   const [chartData, setChartData] = React.useState<TData[]>([]);
   const [ratings, setRatings] = React.useState<TRatings[]>([]);
@@ -69,9 +71,6 @@ export default function LineChart(props: TLineChartProps) {
     const minMaxSentiment = d3.extent(chartData, (d) => d.sentiment) || [
       -30, 30,
     ];
-    const minMaxEpisodesRatings = d3.extent(ratings, (d) => d.episode) || [
-      1, 16,
-    ];
 
     // console.log({ minMaxEpisodes, minMaxSentiment });
 
@@ -79,11 +78,12 @@ export default function LineChart(props: TLineChartProps) {
     // x scales
     const xScale = d3
       .scaleLinear()
-      .domain([1, 16])
+      .domain([1, 17])
       .range([
         dimensions.margin.left,
         dimensions.width - dimensions.margin.right,
-      ]);
+      ])
+      .nice();
 
     // y scale
     const yScale = d3
@@ -92,14 +92,16 @@ export default function LineChart(props: TLineChartProps) {
       .range([
         dimensions.height - dimensions.margin.bottom,
         dimensions.margin.top,
-      ]);
+      ])
+      .nice();
     const yScaleRatings = d3
       .scaleLinear()
-      .domain(minMaxEpisodesRatings as [number, number])
+      .domain([1, 7])
       .range([
         dimensions.height - dimensions.margin.bottom,
         dimensions.margin.top,
-      ]);
+      ])
+      .nice();
     const lineGenerator = d3
       .line<TData>()
       .x((d) => xScale(xAccessor(d)))
@@ -140,71 +142,119 @@ export default function LineChart(props: TLineChartProps) {
 
     xAxis.selectAll("path").attr("stroke", "black"); // For the axis line
 
-    // draw the y axis
-    const yAxis = wrapper
-      .append("g")
-      .attr("transform", `translate(${dimensions.margin.left}, 0)`)
-      .call(d3.axisLeft(yScale).ticks(5));
+    if (showSentiments && chartData.length > 0) {
+      const zeroY = yScale(0);
 
-    yAxis.selectAll("path").attr("stroke", "black"); // For the axis line
-    yAxis
-      .selectAll("text") // Select all tick labels
-      .attr("fill", "black") // Set the text color
-      .style("font-size", "12px"); // Optional: Set font size
+      // Draw the zero line
+      if (!isNaN(zeroY)) {
+        wrapper
+          .append("line")
+          .attr("x1", dimensions.margin.left || 0)
+          .attr("x2", dimensions.width - (dimensions.margin.right || 0))
+          .attr("y1", zeroY)
+          .attr("y2", zeroY)
+          .attr("stroke", "black")
+          .attr("stroke-dasharray", "4 4")
+          .attr("stroke-width", 2);
+      }
+      // draw the y axis
+      const yAxis = wrapper
+        .append("g")
+        .attr("transform", `translate(${dimensions.margin.left}, 0)`)
+        .call(d3.axisLeft(yScale).ticks(5));
 
-    // draw the line
-    wrapper
-      .append("path")
-      .attr("d", lineGenerator(chartData))
-      .attr("fill", "none")
-      .attr("stroke", "#BF894C")
-      .attr("stroke-width", 3)
-      .attr("class", "animated-line");
+      yAxis.selectAll("path").attr("stroke", "black"); // For the axis line
+      yAxis
+        .selectAll("text") // Select all tick labels
+        .attr("fill", "black") // Set the text color
+        .style("font-size", "12px"); // Optional: Set font size
 
-    const zeroY = yScale(0);
-
-    // Draw the zero line
-    if (!isNaN(zeroY)) {
+      // draw the line
       wrapper
-        .append("line")
-        .attr("x1", dimensions.margin.left || 0)
-        .attr("x2", dimensions.width - (dimensions.margin.right || 0))
-        .attr("y1", zeroY)
-        .attr("y2", zeroY)
-        .attr("stroke", "black")
-        .attr("stroke-dasharray", "4 4")
-        .attr("stroke-width", 2);
+        .append("path")
+        .attr("d", lineGenerator(chartData))
+        .attr("fill", "none")
+        .attr("stroke", "#BF894C")
+        .attr("stroke-width", 3)
+        .attr("class", "animated-line");
+
+      // Tiny dots for each episode
+      wrapper
+        .selectAll(".dot-sentiment")
+        .data(chartData)
+        .enter()
+        .append("circle")
+        .attr("class", "dot-sentiment")
+        .attr("cx", (d) => xScale(d.episode))
+        .attr("cy", (d) => yScale(d.sentiment))
+        .attr("r", 4)
+        .attr("fill", "#BF894C");
+
+      // Draw the y axis label
+      wrapper
+        .append("text")
+        .attr("x", dimensions.margin.left + 10)
+        .attr("y", dimensions.margin.top - 20)
+        .attr("text-anchor", "middle")
+        // .attr("transform", `translate(${0}, ${dimensions.height / 2}) rotate(0)`)
+        .text("Sentiments")
+        .style("font-size", "16px")
+        .style("font-weight", "bold");
+    }
+    if (showRatings && ratings.length > 0) {
+      const yAxisRatings = wrapper
+        .append("g")
+        .attr(
+          "transform",
+          `translate(${dimensions.width - dimensions.margin.right}, 0)`
+        )
+        .call(d3.axisRight(yScaleRatings).ticks(5));
+
+      yAxisRatings.selectAll("path").attr("stroke", "black"); // For the axis line
+      yAxisRatings
+        .selectAll("text") // Select all tick labels
+        .attr("fill", "black") // Set the text color
+        .style("font-size", "12px"); // Optional: Set font size
+
+      // Draw the ratings line
+      const lineGeneratorRatings = d3
+        .line<TRatings>()
+        .x((d) => xScale(d.episode))
+        .y((d) => yScaleRatings(d.rating))
+        .curve(d3.curveCardinal.tension(0.5)); // Smooth curve
+      // draw the ratings line
+
+      wrapper
+        .append("path")
+        .attr("d", lineGeneratorRatings(ratings))
+        .attr("fill", "none")
+        .attr("stroke", "#8E734B")
+        .attr("stroke-width", 3)
+        .attr("class", "animated-line-ratings");
+
+      wrapper
+        .selectAll(".dot-rating")
+        .data(ratings)
+        .enter()
+        .append("circle")
+        .attr("class", "dot-rating")
+        .attr("cx", (d) => xScale(d.episode))
+        .attr("cy", (d) => yScaleRatings(d.rating))
+        .attr("r", 4)
+        .attr("fill", "#8E734B");
+
+      // Draw the y axis label for ratings
+      wrapper
+        .append("text")
+        .attr("x", dimensions.width - dimensions.margin.right + 10)
+        .attr("y", dimensions.margin.top - 20)
+        .attr("text-anchor", "middle")
+        // .attr("transform", `translate(${0}, ${dimensions.height / 2}) rotate(0)`)
+        .text("Ratings")
+        .style("font-size", "16px")
+        .style("font-weight", "bold");
     }
 
-    const yAxisRatings = wrapper
-      .append("g")
-      .attr(
-        "transform",
-        `translate(${dimensions.width - dimensions.margin.right}, 0)`
-      )
-      .call(d3.axisRight(yScaleRatings).ticks(5));
-
-    yAxisRatings.selectAll("path").attr("stroke", "black"); // For the axis line
-    yAxisRatings
-      .selectAll("text") // Select all tick labels
-      .attr("fill", "black") // Set the text color
-      .style("font-size", "12px"); // Optional: Set font size
-
-    // Draw the ratings line
-    const lineGeneratorRatings = d3
-      .line<TRatings>()
-      .x((d) => xScale(d.episode))
-      .y((d) => yScaleRatings(d.rating))
-      .curve(d3.curveCardinal.tension(0.5)); // Smooth curve
-    // draw the ratings line
-
-    wrapper
-      .append("path")
-      .attr("d", lineGeneratorRatings(ratings))
-      .attr("fill", "none")
-      .attr("stroke", "#8E734B")
-      .attr("stroke-width", 3)
-      .attr("class", "animated-line-ratings");
     // Draw the x axis label
     wrapper
       .append("text")
@@ -214,51 +264,6 @@ export default function LineChart(props: TLineChartProps) {
       .text("Episodes")
       .style("font-size", "16px")
       .style("font-weight", "bold");
-
-    // Draw the y axis label
-    wrapper
-      .append("text")
-      .attr("x", dimensions.margin.left + 10)
-      .attr("y", dimensions.margin.top - 20)
-      .attr("text-anchor", "middle")
-      // .attr("transform", `translate(${0}, ${dimensions.height / 2}) rotate(0)`)
-      .text("Sentiments")
-      .style("font-size", "16px")
-      .style("font-weight", "bold");
-
-    // Draw the y axis label for ratings
-    wrapper
-      .append("text")
-      .attr("x", dimensions.width - dimensions.margin.right + 10)
-      .attr("y", dimensions.margin.top - 20)
-      .attr("text-anchor", "middle")
-      // .attr("transform", `translate(${0}, ${dimensions.height / 2}) rotate(0)`)
-      .text("Ratings")
-      .style("font-size", "16px")
-      .style("font-weight", "bold");
-
-    // Tiny dots for each episode
-    wrapper
-      .selectAll(".dot-sentiment")
-      .data(chartData)
-      .enter()
-      .append("circle")
-      .attr("class", "dot-sentiment")
-      .attr("cx", (d) => xScale(d.episode))
-      .attr("cy", (d) => yScale(d.sentiment))
-      .attr("r", 4)
-      .attr("fill", "#BF894C");
-
-    wrapper
-      .selectAll(".dot-rating")
-      .data(ratings)
-      .enter()
-      .append("circle")
-      .attr("class", "dot-rating")
-      .attr("cx", (d) => xScale(d.episode))
-      .attr("cy", (d) => yScaleRatings(d.rating))
-      .attr("r", 4)
-      .attr("fill", "#8E734B");
 
     // Tooltip creation
     const tooltip = d3
@@ -369,12 +374,16 @@ export default function LineChart(props: TLineChartProps) {
         pathLengthRatings - drawLengthRatings
       );
       d3.select(path).attr("stroke-dashoffset", pathLength - drawLength);
+      d3.select(pathRatings).attr(
+        ".dashoffset",
+        pathLengthRatings - drawLengthRatings
+      );
     };
 
     window.addEventListener("scroll", handleScroll);
 
     // text guide
-    if (showTextGuide && chartData.length > 0) {
+    if (showTextGuide && showSentiments && chartData.length > 0) {
       // draw line for all
 
       // wrapper
@@ -393,15 +402,6 @@ export default function LineChart(props: TLineChartProps) {
         .text("Gu decides to leave Sanpo →")
         .attr("font-size", "14px")
         .attr("text-anchor", "end");
-
-      // wrapper
-      //   .append("line")
-      //   .attr("x1", xScale(13))
-      //   .attr("x2", xScale(13))
-      //   .attr("y1", dimensions.margin.top)
-      //   .attr("y2", dimensions.height - dimensions.margin.bottom)
-      //   .attr("stroke", "#666")
-      //   .attr("stroke-dasharray", "2,2");
 
       wrapper
         .append("text")
@@ -431,7 +431,14 @@ export default function LineChart(props: TLineChartProps) {
     // Similarly for episode 13...
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [chartData, dimensions, ratings, showTextGuide]);
+  }, [
+    chartData,
+    dimensions,
+    ratings,
+    showTextGuide,
+    showRatings,
+    showSentiments,
+  ]);
 
   return <div id="wrapper" className="relative  mx-auto"></div>;
 }
