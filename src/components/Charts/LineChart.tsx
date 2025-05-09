@@ -10,8 +10,14 @@ type TRatings = {
   episode: number;
   rating: number;
 };
+
+type TLineChartProps = {
+  showTextGuide: boolean;
+};
 // chart to analyse the emotional growth in the episodes using sentiment analysis
-export default function LineChart() {
+export default function LineChart(props: TLineChartProps) {
+  const { showTextGuide } = props;
+
   const [chartData, setChartData] = React.useState<TData[]>([]);
   const [ratings, setRatings] = React.useState<TRatings[]>([]);
   const dimensions = React.useMemo(
@@ -104,7 +110,7 @@ export default function LineChart() {
       .select("#wrapper")
       .append("svg")
       .attr("width", dimensions.width)
-      .attr("height", dimensions.height)
+      .attr("height", dimensions.height + 100)
       .attr("viewBox", `0 0 ${dimensions.width} ${dimensions.height}`)
       .attr(
         "style",
@@ -203,7 +209,7 @@ export default function LineChart() {
     wrapper
       .append("text")
       .attr("x", dimensions.width / 2 - dimensions.margin.right)
-      .attr("y", dimensions.height + 20)
+      .attr("y", dimensions.height - dimensions.margin.bottom + 50)
       .attr("text-anchor", "middle")
       .text("Episodes")
       .style("font-size", "16px")
@@ -213,7 +219,7 @@ export default function LineChart() {
     wrapper
       .append("text")
       .attr("x", dimensions.margin.left + 10)
-      .attr("y", dimensions.margin.top - 10)
+      .attr("y", dimensions.margin.top - 20)
       .attr("text-anchor", "middle")
       // .attr("transform", `translate(${0}, ${dimensions.height / 2}) rotate(0)`)
       .text("Sentiments")
@@ -224,7 +230,7 @@ export default function LineChart() {
     wrapper
       .append("text")
       .attr("x", dimensions.width - dimensions.margin.right + 10)
-      .attr("y", dimensions.margin.top - 10)
+      .attr("y", dimensions.margin.top - 20)
       .attr("text-anchor", "middle")
       // .attr("transform", `translate(${0}, ${dimensions.height / 2}) rotate(0)`)
       .text("Ratings")
@@ -297,15 +303,28 @@ export default function LineChart() {
         const d = chartData[i - 1] ?? chartData[0];
         const r = ratings.find((rt) => rt.episode === d.episode);
 
+        let html = `<strong>Episode:</strong>  ${d.episode}<br/>
+            <strong>Sentiment:</strong>${d.sentiment.toFixed(2)}<br/>
+            <strong>Rating:</strong>   ${r?.rating.toFixed(2) ?? "N/A"} <br/>`;
+        if (d.episode === 12) {
+          html += `<em>Gu chooses leave sanpo leaving Mijeong behind.</em><br/>`;
+        }
+        if (d.episode === 13) {
+          html += `<em>Yeom’s mother passes away.</em><br/>`;
+        }
+        if (d.episode === 14) {
+          html += `<em>Yeom’s mother’s funeral and family grief.</em><br/>`;
+        }
+        if (d.episode === 15) {
+          html += `<em>Gu and Yeom Mijeong are re-united.</em><br/>`;
+        }
+
         // 3) position the tooltip
         tooltip
           .style("display", "block")
           .style("left", event.pageX + 10 + "px")
-          .style("top", event.pageY - 30 + "px").html(`
-            <strong>Episode:</strong>  ${d.episode}<br/>
-            <strong>Sentiment:</strong>${d.sentiment.toFixed(2)}<br/>
-            <strong>Rating:</strong>   ${r?.rating.toFixed(2) ?? "N/A"}
-          `);
+          .style("top", event.pageY - 30 + "px")
+          .html(html);
       })
       .on("pointerout", () => tooltip.style("display", "none"));
 
@@ -335,7 +354,7 @@ export default function LineChart() {
       if (!wrapper) return;
 
       const { top, height } = wrapper.getBoundingClientRect();
-      const start = top + scrollTop - windowHeight * 0.9; // start animating when half the wrapper is in view
+      const start = top + scrollTop - windowHeight * 0.8; // start animating when half the wrapper is in view
       const end = start + height;
 
       const scrollPercent = Math.min(
@@ -353,8 +372,66 @@ export default function LineChart() {
     };
 
     window.addEventListener("scroll", handleScroll);
+
+    // text guide
+    if (showTextGuide && chartData.length > 0) {
+      // draw line for all
+
+      // wrapper
+      //   .append("line")
+      //   .attr("x1", xScale(12))
+      //   .attr("x2", xScale(12))
+      //   .attr("y1", dimensions.margin.top)
+      //   .attr("y2", dimensions.height - dimensions.margin.bottom)
+      //   .attr("stroke", "#666")
+      //   .attr("stroke-dasharray", "2,2");
+
+      wrapper
+        .append("text")
+        .attr("x", xScale(12))
+        .attr("y", dimensions.margin.top)
+        .text("Gu decides to leave Sanpo →")
+        .attr("font-size", "14px")
+        .attr("text-anchor", "end");
+
+      // wrapper
+      //   .append("line")
+      //   .attr("x1", xScale(13))
+      //   .attr("x2", xScale(13))
+      //   .attr("y1", dimensions.margin.top)
+      //   .attr("y2", dimensions.height - dimensions.margin.bottom)
+      //   .attr("stroke", "#666")
+      //   .attr("stroke-dasharray", "2,2");
+
+      wrapper
+        .append("text")
+        .attr("x", xScale(13))
+        .attr("y", yScale(chartData[12].sentiment))
+        .text("Mama Yeom passes away in her sleep →")
+        .attr("font-size", "14px")
+        .attr("text-anchor", "end");
+
+      wrapper
+        .append("text")
+        .attr("x", xScale(14))
+        .attr("y", yScale(chartData[13].sentiment))
+        .text("The mother's funeral and family grief →")
+        .attr("font-size", "14px")
+        .attr("text-anchor", "end");
+
+      wrapper
+        .append("text")
+        .attr("x", xScale(15))
+        .attr("y", yScale(chartData[14].sentiment))
+        .text("Gu and Yeom Mijeong are re-united →")
+        .attr("font-size", "14px")
+        .attr("text-anchor", "end");
+    }
+
+    // Similarly for episode 13...
+
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [chartData, dimensions, ratings]);
+  }, [chartData, dimensions, ratings, showTextGuide]);
 
   return <div id="wrapper" className="relative  mx-auto"></div>;
 }

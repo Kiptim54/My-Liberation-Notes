@@ -1,9 +1,34 @@
 import LineChart from "./Charts/LineChart";
+import { useState } from "react";
+import { Checkbox } from "./ui/checkbox";
 
 export default function EpisodesSentiments() {
+  const [showTextGuide, setShowTextGuide] = useState(false);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen bg-secondaryLight">
-      <LineChart />
+      <div className="flex flex-col justify-center p-6 gap-4">
+        <LineChart showTextGuide={showTextGuide} />
+        <div className="items-top flex space-x-2 px-6">
+          <Checkbox
+            id="terms1"
+            checked={showTextGuide}
+            onCheckedChange={(checked) => {
+              setShowTextGuide(checked === true);
+            }}
+          />
+          <div className="grid gap-1.5 leading-none">
+            <label
+              htmlFor="terms1"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Show Line/Text Guides
+            </label>
+            <p className="text-sm text-muted-foreground">
+              This will highlight interesting episode and things that happened
+            </p>
+          </div>
+        </div>
+      </div>
       <div className="bg-secondaryLight flex flex-col  text-black justify-center p-6 gap-4">
         <p className=" text-xl font-extrabold ">
           Episode{" "}
@@ -23,25 +48,30 @@ export default function EpisodesSentiments() {
           :
         </p>
         <p className="font-outfit text-normal">
-          Most stories have a tried and tested formula, and kdramas are
-          notorious yet loved for this. From the plot setting, to the rising
-          incident, the climax and finally the resolution, these narratives hold
-          us captives as we wait for our dopamine hit just to start the cycle
-          again.
+          Most stories follow a tried and tested formula: plot setup, rising
+          action, climax, and resolution. K-dramas, in particular, are beloved
+          for this emotional rhythm — a rollercoaster that delivers catharsis
+          just in time for the next ride. <br /> <br />
+          But My Liberation Notes dares to break that mold. In this story, for
+          the most part, nothing “happens.” Characters wake up, commute to work,
+          return home, eat, talk, and repeat — a quiet loop of daily existence.
+          For some viewers, this was frustratingly mundane; for others, it was
+          meditative, even healing. The show doesn’t ask for our attention with
+          plot twists — it holds up a mirror instead. And through that mirror,
+          it seems to ask, "Isn't that sad? Isn't that us?" <br />
+          <br /> It’s no surprise then that the sentiment scores across episodes
+          skew mostly negative — weighted by the characters’ burdens,
+          disillusionment, and emotional fatigue. Moments of hope do appear,
+          like flickers in the dark, but they're often fleeting. <br />
+          <br /> Still, the viewer ratings tell a different story. Despite the
+          consistently low sentiment, ratings steadily rise —{" "}
+          <b>starting at 2.9 and ending at 6.7.</b> <br />
           <br />
-          <br />
-          Yet in My Liberation Notes, we could say that, for the most part,
-          nothing happens. People wake up, commute to work, commute back home,
-          eat and talk and repeat the same day over and over again. For some
-          viewers, this was unbearably dull, but to others, this was calming and
-          a true representation of daily life. The exhaustion of the cycle of
-          life. For all its nothingness, it begs the question, "Isn't that sad,
-          isn't that us?"
-          <br />
-          <br />
-          With most characters burdened by life, the sentiments of the episodes
-          are mostly negative. Once in a while, there is hope, only for it to be
-          dashed and blown out by life.
+          The only positively scored episode, Episode 12, aligns with one of the
+          highest-rated points in the series. But even the emotionally heavier
+          later episodes (Episodes 13–16) outperform the earlier ones in
+          ratings. This suggests that viewers were not deterred by sadness —
+          they were drawn to its authenticity.
         </p>
       </div>
     </div>
