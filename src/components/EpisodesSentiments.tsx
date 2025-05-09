@@ -21,7 +21,7 @@ export default function EpisodesSentiments() {
             />
             <div className="grid gap-1.5 leading-none">
               <label
-                htmlFor="terms1"
+                htmlFor="terms3"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Show Ratings
@@ -40,7 +40,7 @@ export default function EpisodesSentiments() {
             />
             <div className="grid gap-1.5 leading-none">
               <label
-                htmlFor="terms1"
+                htmlFor="terms2"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 Show Sentiments
