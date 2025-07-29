@@ -374,10 +374,10 @@ export default function LineChart(props: TLineChartProps) {
         pathLengthRatings - drawLengthRatings
       );
       d3.select(path).attr("stroke-dashoffset", pathLength - drawLength);
-      d3.select(pathRatings).attr(
-        ".dashoffset",
-        pathLengthRatings - drawLengthRatings
-      );
+      // d3.select(pathRatings).attr(
+      //   ".dashoffset",
+      //   pathLengthRatings - drawLengthRatings
+      // );
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -440,5 +440,5 @@ export default function LineChart(props: TLineChartProps) {
     showSentiments,
   ]);
 
-  return <div id="wrapper" className="relative  mx-auto"></div>;
+  return <div id='wrapper' className='relative  mx-auto'></div>;
 }
