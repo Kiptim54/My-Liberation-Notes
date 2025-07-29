@@ -4,7 +4,7 @@ import FamilyIntro from "./components/FamilyIntro";
 import EpisodesSentiments from "./components/EpisodesSentiments";
 import FamilySentiment from "./components/FamilySentiment";
 import FamilySpeakingTime from "./components/FamilySpeakingTime";
-import TopKdramaThemes from "./components/TopKdramaThemes";
+// import TopKdramaThemes from "./components/TopKdramaThemes";
 import { motion } from "framer-motion";
 
 function App() {

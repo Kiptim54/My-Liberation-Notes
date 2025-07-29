@@ -1,4 +1,4 @@
-import Rules from "./Rules";
+// import Rules from "./Rules";
 
 export default function Header() {
   return (

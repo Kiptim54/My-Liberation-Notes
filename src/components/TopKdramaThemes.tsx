@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "react";
 import Themes from "./Charts/Themes";
 
 export default function TopKdramaThemes() {

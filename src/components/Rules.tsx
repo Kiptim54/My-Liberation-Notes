@@ -1,4 +1,4 @@
-import React from "react";
+// import React from "reacßt";
 import { motion, stagger } from "framer-motion";
 
 export default function Rules() {
