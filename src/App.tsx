@@ -13,14 +13,15 @@ function App() {
       <div className=''>
         <motion.div
           className='snap-start'
-          initial={{ opacity: 0.5, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0.5 }}
+          whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
           <Header />
         </motion.div>
-
-        <Rules />
+        <motion.div className='snap-start'>
+          <Rules />
+        </motion.div>
 
         <motion.div
           className='snap-start '

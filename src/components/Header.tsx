@@ -4,7 +4,7 @@ export default function Header() {
   return (
     <div className='relative  bg-main-bg bg-cover    font-playfair '>
       <div className='bg-gray-900 absolute inset-0 bg-opacity-10'></div>
-      <div className='container mx-auto p-4 flex justify-center flex-col items-center text-white min-h-screen '>
+      <div className='container mx-auto p-4 flex justify-center flex-col items-center text-white min-h-[100vh] '>
         <h1 className='text-6xl font-bold font-outfit text-white mix-blend-screen'>
           My Liberation Notes
         </h1>

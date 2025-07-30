@@ -6,6 +6,7 @@ export default {
     extend: {
       backgroundImage: {
         "main-bg": "url('/assets/cast/background.svg')",
+        "rules-bg": "url('/assets/rules-background (1).svg')",
       },
       fontFamily: {
         playfair: ["Playfair Display", "sans-serif"],
