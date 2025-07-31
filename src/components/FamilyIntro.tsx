@@ -137,6 +137,7 @@ export default function FamilyIntro() {
                   onClick={() => {
                     setSelectedFamilyMember(member);
                     setShowFamilyMember(true);
+                    setFamilyMemberIndex(familyList.indexOf(member));
                   }}
                 >
                   {member.name}
