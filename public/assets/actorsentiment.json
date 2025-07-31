@@ -126,5 +126,37 @@
       "negative": -64.2,
       "wordcount": 103
     }
+  },
+  {
+    "Yeom Je-ho": {
+      "positive": 5,
+      "negative": -18.9,
+      "wordcount": 21
+    },
+    "Kwak Hye-suk": {
+      "positive": 108.1,
+      "negative": -80.2,
+      "wordcount": 276
+    },
+    "Yeom Gi-Jeong": {
+      "positive": 85.3,
+      "negative": -280.4,
+      "wordcount": 593
+    },
+    "Yeom Chang-hee": {
+      "positive": 386.1,
+      "negative": -383.6,
+      "wordcount": 1065
+    },
+    "Yeom Mi-Jeong": {
+      "positive": 120.4,
+      "negative": -193.9,
+      "wordcount": 260
+    },
+    "Mr. Gu": {
+      "positive": 52.8,
+      "negative": -61.7,
+      "wordcount": 93
+    }
   }
 ]

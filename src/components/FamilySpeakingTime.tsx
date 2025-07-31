@@ -57,7 +57,7 @@ export default function FamilySpeakingTime() {
                 />
               </SelectTrigger>
               <SelectContent className='max-h-[180px]'>
-                {[1, 2, 3, 4].map((episode) => (
+                {[1, 2, 3, 4, 5].map((episode) => (
                   <SelectItem key={episode} value={`Episode ${episode}`}>
                     Episode {episode}
                   </SelectItem>
@@ -67,11 +67,11 @@ export default function FamilySpeakingTime() {
           </div>
           <ArrowRightCircleIcon
             onClick={() => {
-              if (currentEpisode === 4) return;
+              if (currentEpisode === 5) return;
               setCurrentEpisode(currentEpisode + 1);
             }}
             className={`${
-              currentEpisode === 4
+              currentEpisode === 5
                 ? "text-gray-400"
                 : " text-black cursor-pointer "
             } size-6 `}
