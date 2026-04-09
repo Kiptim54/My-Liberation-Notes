@@ -56,7 +56,7 @@ export default function FamilySentiment() {
                 />
               </SelectTrigger>
               <SelectContent className='max-h-[180px]'>
-                {[1, 2, 3, 4, 5].map((episode) => (
+                {Array.from({ length: 16 }, (_, i) => i + 1).map((episode) => (
                   <SelectItem key={episode} value={`Episode ${episode}`}>
                     Episode {episode}
                   </SelectItem>
@@ -66,11 +66,11 @@ export default function FamilySentiment() {
           </div>
           <ArrowRightCircleIcon
             onClick={() => {
-              if (currentEpisode === 5) return;
+              if (currentEpisode === 16) return;
               setCurrentEpisode(currentEpisode + 1);
             }}
             className={`${
-              currentEpisode === 5
+              currentEpisode === 16
                 ? "text-gray-400"
                 : " text-black cursor-pointer "
             } size-6 `}

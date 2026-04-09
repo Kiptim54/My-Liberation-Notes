@@ -30,11 +30,11 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
       height: window.innerWidth < 768 ? 900 : 400,
       margin: { top: 20, right: 30, bottom: 30, left: 40 },
     }),
-    []
+    [],
   );
 
   useEffect(() => {
-    d3.json("/assets/actorsentiment.json").then((data) => {
+    d3.json("/assets/actor_sentiment_new.json").then((data) => {
       if (!data && !currentEpisode) return;
       // console.log(data);
       const typedData = data as SentimentData[];
@@ -93,7 +93,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
       .attr("viewBox", `0 0 ${dimensions.width} ${dimensions.height}`)
       .attr(
         "style",
-        "max-width: 100%; width:90%; height: 100%; height: intrinsic; background:#EADFCF; padding:12; posiytion:relative "
+        "max-width: 100%; width:90%; height: 100%; height: intrinsic; background:#EADFCF; padding:12; posiytion:relative ",
       );
     // create the bars
 
@@ -159,7 +159,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
           .attr("height", 0)
           .attr("width", () => xScale(0))
           .attr("y", xScale(0))
-          .remove()
+          .remove(),
       // .remove
     );
     // update the bars
@@ -185,7 +185,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
           .html(
             `${
               data.character
-            }: <b>${data?.wordCount?.toLocaleString()} Words Spoken </b>`
+            }: <b>${data?.wordCount?.toLocaleString()} Words Spoken </b>`,
           )
           .style("left", 0 + "px")
           .style("top", 0 + "px");
@@ -217,7 +217,7 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
       .attr("class", "x-axis")
       .attr(
         "transform",
-        `translate(0, ${dimensions.height - dimensions.margin.bottom})`
+        `translate(0, ${dimensions.height - dimensions.margin.bottom})`,
       );
     xAxisGroup
       .transition()
@@ -265,8 +265,8 @@ export default function VerticalBarChart({ currentEpisode = 1 }: TProps) {
   }, [chartData, dimensions]);
 
   return (
-    <div id="vertical-bar-chart" className="mx-auto font-outfit relative">
-      <svg ref={svgRef} className=""></svg>
+    <div id='vertical-bar-chart' className='mx-auto font-outfit relative'>
+      <svg ref={svgRef} className=''></svg>
     </div>
   );
 }

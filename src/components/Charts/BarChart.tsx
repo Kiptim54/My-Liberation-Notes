@@ -31,11 +31,11 @@ export default function BarChart(props: TBarGraphProps) {
       height: window.innerWidth < 768 ? 900 : 400,
       margin: { top: 20, right: 30, bottom: 30, left: 40 },
     }),
-    []
+    [],
   );
 
   useEffect(() => {
-    d3.json("/assets/actorsentiment.json").then((data) => {
+    d3.json("/assets/actor_sentiment_new.json").then((data) => {
       if (!data && !currentEpisode) return;
       // console.log(data);
       const typedData = data as SentimentData[];
@@ -104,7 +104,7 @@ export default function BarChart(props: TBarGraphProps) {
       .attr("viewBox", `0 0 ${dimensions.width} ${dimensions.height}`)
       .attr(
         "style",
-        "max-width: 100%; width:95%; height: 100%; height: intrinsic; background:#EADFCF; padding:12; margin:auto"
+        "max-width: 100%; width:95%; height: 100%; height: intrinsic; background:#EADFCF; padding:12; margin:auto",
       );
 
     // Positive bars
@@ -127,7 +127,9 @@ export default function BarChart(props: TBarGraphProps) {
                 .transition()
                 .duration(600)
                 .attr("y", (d) => yScale(d.positive))
-                .attr("height", (d) => Math.abs(yScale(d.positive) - yScale(0)))
+                .attr("height", (d) =>
+                  Math.abs(yScale(d.positive) - yScale(0)),
+                ),
             ),
         (update) =>
           update
@@ -141,7 +143,7 @@ export default function BarChart(props: TBarGraphProps) {
             .duration(300)
             .attr("height", 0)
             .attr("y", yScale(0))
-            .remove()
+            .remove(),
       );
 
     // Negative bars
@@ -165,7 +167,9 @@ export default function BarChart(props: TBarGraphProps) {
                 .transition()
                 .duration(600)
                 .attr("y", () => yScale(0))
-                .attr("height", (d) => Math.abs(yScale(0) - yScale(d.negative)))
+                .attr("height", (d) =>
+                  Math.abs(yScale(0) - yScale(d.negative)),
+                ),
             ),
         (update) =>
           update
@@ -179,7 +183,7 @@ export default function BarChart(props: TBarGraphProps) {
             .duration(300)
             .attr("height", 0)
             .attr("y", yScale(0))
-            .remove()
+            .remove(),
       );
 
     //   add tooltip
@@ -200,7 +204,7 @@ export default function BarChart(props: TBarGraphProps) {
         tooltip.transition().duration(200).style("opacity", 0.9);
         tooltip
           .html(
-            `<b>${data.character}</b>: <br/> Positive: ${data.positive} <br/> Negative: ${data.negative}`
+            `<b>${data.character}</b>: <br/> Positive: ${data.positive} <br/> Negative: ${data.negative}`,
           )
           .style("left", event.pageX + "px")
           .style("top", event.pageY - 28 + "px");
@@ -254,7 +258,7 @@ export default function BarChart(props: TBarGraphProps) {
       .append("g")
       .attr(
         "transform",
-        `translate(${0}, ${dimensions.height - dimensions.margin.bottom - 10})`
+        `translate(${0}, ${dimensions.height - dimensions.margin.bottom - 10})`,
       );
     legend
       .append("rect")
@@ -284,5 +288,5 @@ export default function BarChart(props: TBarGraphProps) {
       .style("font-size", "12px")
       .attr("fill", "black");
   }, [chartData, dimensions]);
-  return <div id="bar-wrapper" className="w-full mx-auto font-outfit"></div>;
+  return <div id='bar-wrapper' className='w-full mx-auto font-outfit'></div>;
 }
